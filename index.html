@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NexatonCity - Voxel Citizen World</title>
+  <title>NexatonCity - Official Voxel World</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@600;800&display=swap" rel="stylesheet">
   <style>
     * { user-select: none; -webkit-user-select: none; }
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #1e293b; font-family: 'Inter', sans-serif; }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0f172a; font-family: 'Inter', sans-serif; }
     .pixel-font { font-family: 'Press Start 2P', monospace; }
     .retro-font { font-family: 'VT323', monospace; }
-    
-    /* Minecraft / TheoTown style UI borders */
+
     .mc-panel {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.9);
       border: 3px solid #475569;
       box-shadow: inset -3px -3px 0px #0f172a, inset 3px 3px 0px #94a3b8, 0 10px 25px rgba(0,0,0,0.5);
       backdrop-filter: blur(6px);
@@ -44,14 +43,14 @@
   <div class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
     <!-- Brand & Population -->
     <div class="mc-panel px-3.5 py-2.5 rounded-xl text-white flex items-center gap-3 pointer-events-auto">
-      <div class="text-2xl">🏙️</div>
+      <div class="text-2xl">🏛️</div>
       <div>
         <div class="flex items-center gap-2">
           <h1 class="pixel-font text-xs sm:text-sm text-sky-400 tracking-tight">NEXATON CITY</h1>
-          <span class="bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+          <span class="bg-amber-500/20 border border-amber-400 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded">DAY 1 OPEN</span>
         </div>
         <p class="retro-font text-base text-slate-300 leading-none mt-1">
-          👥 Citizens: <span id="hudPop" class="text-white font-bold">12</span> | 🧱 Style: Voxel Block
+          👥 Citizens: <span class="text-emerald-400 font-bold">0</span> | 🏠 Empty Houses: <span id="hudEmpty" class="text-white font-bold">12</span>
         </p>
       </div>
     </div>
@@ -61,11 +60,11 @@
       <input
         id="searchInput"
         type="text"
-        placeholder="Find @username..."
+        placeholder="Search @username or 'Mayor'..."
         class="bg-slate-900/90 text-white text-xs sm:text-sm px-3 py-2 rounded-lg w-full border border-slate-700 focus:outline-none focus:border-sky-400"
-        onkeydown="if(event.key==='Enter') findCitizen()"
+        onkeydown="if(event.key==='Enter') findPlot()"
       />
-      <button onclick="findCitizen()" class="mc-btn text-slate-950 font-extrabold text-xs px-3 py-2 rounded-lg shrink-0">
+      <button onclick="findPlot()" class="mc-btn text-slate-950 font-extrabold text-xs px-3 py-2 rounded-lg shrink-0">
         🔍 FIND
       </button>
     </div>
@@ -76,7 +75,7 @@
         🌙 Night Mode
       </button>
       <a href="https://pevcsr-r6.myshopify.com" target="_blank" class="mc-btn-gold text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
-        <span>🛒</span> <span class="hidden sm:inline">UPGRADE HOUSE</span>
+        <span>🛒</span> <span class="hidden sm:inline">CITY SUPPLY SHOP</span>
       </a>
     </div>
   </div>
@@ -84,19 +83,19 @@
   <!-- BOTTOM QUEST / RULES BAR -->
   <div class="fixed bottom-3 left-3 right-3 z-20 flex flex-wrap items-end justify-between gap-2 pointer-events-none">
     <div class="mc-panel p-3 rounded-xl text-white pointer-events-auto max-w-xl">
-      <div class="pixel-font text-[10px] text-amber-400 mb-1.5">⚡ CITIZEN UPGRADE RULES (TAP ANY HOUSE TO ENTER)</div>
+      <div class="pixel-font text-[10px] text-amber-400 mb-1.5">📢 MAYOR'S ANNOUNCEMENT: 12 FREE HOUSES AVAILABLE!</div>
       <div class="grid grid-cols-3 gap-2 text-[11px]">
-        <div class="bg-slate-800/90 p-2 rounded-lg border border-slate-700">
+        <div class="bg-slate-800/90 p-2 rounded-lg border border-sky-500/50">
           <span class="text-sky-400 font-bold">1. FOLLOW</span>
-          <p class="text-slate-300 text-[10px] mt-0.5">Free Subsidized Block House</p>
+          <p class="text-slate-300 text-[10px] mt-0.5">Move into an Empty Subsidized House</p>
         </div>
         <div class="bg-slate-800/90 p-2 rounded-lg border border-emerald-700/60">
           <span class="text-emerald-400 font-bold">2. COMMENT</span>
-          <p class="text-slate-300 text-[10px] mt-0.5">Unlock Yard + Fence + Oak Tree</p>
+          <p class="text-slate-300 text-[10px] mt-0.5">Get Yard + Fence + Oak Tree</p>
         </div>
         <div class="bg-slate-800/90 p-2 rounded-lg border border-amber-600/60">
-          <span class="text-amber-400 font-bold">3. SHOP ITEM</span>
-          <p class="text-slate-300 text-[10px] mt-0.5">Cyber Mansion + Real Decor</p>
+          <span class="text-amber-400 font-bold">3. SHOP DECOR</span>
+          <p class="text-slate-300 text-[10px] mt-0.5">Upgrade to Villa + Real Room Item</p>
         </div>
       </div>
     </div>
@@ -105,53 +104,41 @@
     <div class="flex flex-col gap-1.5 pointer-events-auto">
       <button onclick="adjustZoom(0.15)" class="mc-panel w-10 h-10 rounded-xl text-white font-black text-lg flex items-center justify-center">+</button>
       <button onclick="adjustZoom(-0.15)" class="mc-panel w-10 h-10 rounded-xl text-white font-black text-lg flex items-center justify-center">−</button>
-      <button onclick="resetCamera()" class="mc-panel w-10 h-10 rounded-xl text-white text-xs font-bold flex items-center justify-center" title="Center Map">🎯</button>
+      <button onclick="resetCamera()" class="mc-panel w-10 h-10 rounded-xl text-white text-xs font-bold flex items-center justify-center" title="Center on Mayor">🎯</button>
     </div>
   </div>
 
   <!-- TOAST NOTIFICATION -->
-  <div id="toastMsg" class="fixed top-20 left-1/2 -translate-x-1/2 z-30 hidden mc-panel px-4 py-2 rounded-xl text-xs font-bold text-sky-300"></div>
+  <div id="toastMsg" class="fixed top-20 left-1/2 -translate-x-1/2 z-30 hidden mc-panel px-4 py-2 rounded-xl text-xs font-bold text-amber-300 text-center"></div>
 
-  <!-- MODAL: ENTER 3D VOXEL HOUSE INTERIOR -->
+  <!-- MODAL: ENTER EMPTY HOUSE INTERIOR -->
   <div id="interiorModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="mc-panel rounded-2xl max-w-md w-full overflow-hidden text-white">
-      <!-- Top Bar -->
       <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
         <div>
-          <span id="roomBadge" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/40">Subsidized House</span>
-          <h2 id="roomOwner" class="pixel-font text-xs sm:text-sm text-white mt-1.5">@username</h2>
+          <span id="roomBadge" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">AVAILABLE FOR FREE</span>
+          <h2 id="roomTitle" class="pixel-font text-xs sm:text-sm text-white mt-1.5">Subsidized House #1</h2>
         </div>
         <button onclick="closeInterior()" class="bg-rose-600 hover:bg-rose-500 text-white font-black w-8 h-8 rounded-lg border-2 border-rose-400">✕</button>
       </div>
 
       <!-- 3D Voxel Interior Canvas -->
       <div class="relative bg-slate-950">
-        <canvas id="roomCanvas" width="420" height="250" class="w-full h-[230px] block"></canvas>
+        <canvas id="roomCanvas" width="420" height="240" class="w-full h-[220px] block"></canvas>
         <div class="absolute top-2 left-2 bg-slate-900/80 border border-slate-700 px-2.5 py-1 rounded text-[11px] text-slate-300">
-          🛋️ <span id="roomStatusText">Inside Citizen's Block Room</span>
+          🔑 <span id="roomStatusText">Unclaimed Starter Room (Waiting for Citizen)</span>
         </div>
       </div>
 
-      <!-- Details & Upgrade CTA -->
       <div class="p-4 space-y-3">
-        <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
-          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
-            <div class="text-slate-400 text-[10px]">HOUSE TYPE</div>
-            <div id="statHouse" class="font-bold text-sky-400 mt-0.5">Subsidized</div>
-          </div>
-          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
-            <div class="text-slate-400 text-[10px]">YARD & TREE</div>
-            <div id="statYard" class="font-bold text-emerald-400 mt-0.5">Unlocked ✓</div>
-          </div>
-          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
-            <div class="text-slate-400 text-[10px]">ROOM DECOR</div>
-            <div id="statDecor" class="font-bold text-amber-400 mt-0.5">Locked 🔒</div>
-          </div>
+        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+          🏠 <strong class="text-white">This house is currently empty!</strong><br/>
+          Follow <span class="text-sky-400 font-bold">@NexatonCity</span> on TikTok to claim this subsidized house for free, or order room decor below to immediately move in with a <strong class="text-amber-400">VIP Villa Upgrade</strong>!
         </div>
 
         <a href="https://pevcsr-r6.myshopify.com" target="_blank"
            class="mc-btn-gold w-full py-3 rounded-xl text-center text-slate-950 font-black text-xs sm:text-sm block">
-          🎁 BUY REAL DECOR & UPGRADE THIS HOUSE
+          🛒 CLAIM & UPGRADE THIS HOUSE IN SHOP
         </a>
       </div>
     </div>
@@ -159,49 +146,47 @@
 
   <script>
     // =========================================================
-    // 1. DATA WARGA NEXATON CITY (Bisa ditambah kapan saja)
+    // 1. DATA 12 RUMAH SUBSIDI KOSONG (BENTUK SAMA, BEDA WARNA)
     // =========================================================
-    const citizens = [
-      { id: 1, username: "@alex_vibes", gx: 0, gy: 0, roof: "#0ea5e9", skin: "#f59e0b", shirt: "#0284c7", hasCommented: true, tier: "Subsidized House", decor: null },
-      { id: 2, username: "@sarah_craft", gx: 1, gy: 0, roof: "#f43f5e", skin: "#fed7aa", shirt: "#e11d48", hasCommented: false, tier: "Subsidized House", decor: null },
-      { id: 3, username: "@jayden_uk", gx: 2, gy: 0, roof: "#8b5cf6", skin: "#fde68a", shirt: "#7c3aed", hasCommented: true, tier: "Cyber Villa", decor: "Volcano Diffuser" },
-      { id: 4, username: "@emily_blocks", gx: 0, gy: 2, roof: "#10b981", skin: "#fcd34d", shirt: "#059669", hasCommented: true, tier: "Subsidized House", decor: null },
-      { id: 5, username: "@lucas_gamer", gx: 1, gy: 2, roof: "#f59e0b", skin: "#d97706", shirt: "#2563eb", hasCommented: false, tier: "Subsidized House", decor: null },
-      { id: 6, username: "@chloe_nyc", gx: 2, gy: 2, roof: "#ec4899", skin: "#ffedd5", shirt: "#db2777", hasCommented: true, tier: "Luxury Penthouse", decor: "Levitating Moon Lamp" },
-      { id: 7, username: "@noah_builder", gx: 0, gy: 3, roof: "#14b8a6", skin: "#fdba74", shirt: "#0d9488", hasCommented: true, tier: "Subsidized House", decor: null },
-      { id: 8, username: "@mia_pixel", gx: 1, gy: 3, roof: "#6366f1", skin: "#fef08a", shirt: "#4f46e5", hasCommented: false, tier: "Subsidized House", decor: null },
-      { id: 9, username: "@ryan_blocks", gx: 2, gy: 3, roof: "#ef4444", skin: "#fed7aa", shirt: "#dc2626", hasCommented: true, tier: "Subsidized House", decor: null },
-      { id: 10, username: "@zoe_streams", gx: 3, gy: 0, roof: "#06b6d4", skin: "#fde68a", shirt: "#0891b2", hasCommented: true, tier: "Cyber Villa", decor: "Pixel Speaker" },
-      { id: 11, username: "@ethan_vox", gx: 3, gy: 2, roof: "#84cc16", skin: "#f59e0b", shirt: "#65a30d", hasCommented: false, tier: "Subsidized House", decor: null },
-      { id: 12, username: "@lily_moon", gx: 3, gy: 3, roof: "#a855f7", skin: "#ffedd5", shirt: "#9333ea", hasCommented: true, tier: "Subsidized House", decor: null }
+    const emptyHouses = [
+      // Distrik Barat (Kiri Balai Desa)
+      { id: 1, lotName: "HOUSE #1", gx: 2, gy: 2, roof: "#0ea5e9", owner: null },
+      { id: 2, lotName: "HOUSE #2", gx: 5, gy: 2, roof: "#f43f5e", owner: null },
+      { id: 3, lotName: "HOUSE #3", gx: 2, gy: 6, roof: "#10b981", owner: null },
+      { id: 4, lotName: "HOUSE #4", gx: 5, gy: 6, roof: "#f59e0b", owner: null },
+      { id: 5, lotName: "HOUSE #5", gx: 2, gy: 14, roof: "#8b5cf6", owner: null },
+      { id: 6, lotName: "HOUSE #6", gx: 5, gy: 14, roof: "#ec4899", owner: null },
+
+      // Distrik Timur (Kanan Balai Desa)
+      { id: 7, lotName: "HOUSE #7", gx: 15, gy: 2, roof: "#14b8a6", owner: null },
+      { id: 8, lotName: "HOUSE #8", gx: 18, gy: 2, roof: "#6366f1", owner: null },
+      { id: 9, lotName: "HOUSE #9", gx: 15, gy: 6, roof: "#ef4444", owner: null },
+      { id: 10, lotName: "HOUSE #10", gx: 18, gy: 6, roof: "#06b6d4", owner: null },
+      { id: 11, lotName: "HOUSE #11", gx: 15, gy: 14, roof: "#84cc16", owner: null },
+      { id: 12, lotName: "HOUSE #12", gx: 18, gy: 14, roof: "#a855f7", owner: null }
     ];
 
-    // Lahan kosong untuk request infrastruktur dari warga
-    const infraLots = [
-      { gx: 4, gy: 0, label: "REQUEST LOT #1", sub: "Comment to build Hospital/Park!" },
-      { gx: 4, gy: 2, label: "REQUEST LOT #2", sub: "Comment to build Police/Cafe!" },
-      { gx: 4, gy: 3, label: "SPONSOR TOWER", sub: "Tap to visit Nexaton Supply!", isSponsor: true }
-    ];
-
-    document.getElementById("hudPop").textContent = citizens.length;
+    document.getElementById("hudEmpty").textContent = emptyHouses.length;
 
     // =========================================================
-    // 2. ISOMETRIC VOXEL ENGINE (THEOTOWN + MINECRAFT)
+    // 2. ISOMETRIC VOXEL ENGINE (LAHAN LUAS + BALAI DESA + AIR MANCUR)
     // =========================================================
     const canvas = document.getElementById("cityCanvas");
     const ctx = canvas.getContext("2d");
 
+    const GRID_W = 22;
+    const GRID_H = 20;
+
     let camX = window.innerWidth / 2;
-    let camY = 140;
-    let zoom = window.innerWidth < 640 ? 0.78 : 1.0;
+    let camY = 95;
+    let zoom = window.innerWidth < 640 ? 0.68 : 0.92;
     let isDragging = false;
     let dragStartX = 0, dragStartY = 0;
     let clickDist = 0;
     let isNight = false;
     let tick = 0;
-    let selectedCitizen = null;
-    let highlightedId = null;
-    let clickableHouses = [];
+    let selectedHouse = null;
+    let clickableZones = [];
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -210,14 +195,12 @@
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    // Konversi koordinat Grid (x, y, z) ke Layar Isometrik
     function toIso(x, y, z = 0) {
-      const isoX = (x - y) * 32 * zoom + camX;
-      const isoY = (x + y) * 16 * zoom - (z * 20 * zoom) + camY;
+      const isoX = (x - y) * 28 * zoom + camX;
+      const isoY = (x + y) * 14 * zoom - (z * 18 * zoom) + camY;
       return { x: isoX, y: isoY };
     }
 
-    // Menggambar Balok 3D Voxel (Minecraft Block)
     function drawVoxel(x, y, z, w, d, h, topCol, leftCol, rightCol) {
       const p00 = toIso(x, y, z + h);
       const p10 = toIso(x + w, y, z + h);
@@ -228,193 +211,222 @@
       const b11 = toIso(x + w, y + d, z);
       const b01 = toIso(x, y + d, z);
 
-      // Sisi Kiri
       ctx.fillStyle = leftCol;
       ctx.beginPath();
-      ctx.moveTo(p01.x, p01.y);
-      ctx.lineTo(p11.x, p11.y);
-      ctx.lineTo(b11.x, b11.y);
-      ctx.lineTo(b01.x, b01.y);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(p01.x, p01.y); ctx.lineTo(p11.x, p11.y); ctx.lineTo(b11.x, b11.y); ctx.lineTo(b01.x, b01.y);
+      ctx.closePath(); ctx.fill();
 
-      // Sisi Kanan
       ctx.fillStyle = rightCol;
       ctx.beginPath();
-      ctx.moveTo(p10.x, p10.y);
-      ctx.lineTo(p11.x, p11.y);
-      ctx.lineTo(b11.x, b11.y);
-      ctx.lineTo(b10.x, b10.y);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(p10.x, p10.y); ctx.lineTo(p11.x, p11.y); ctx.lineTo(b11.x, b11.y); ctx.lineTo(b10.x, b10.y);
+      ctx.closePath(); ctx.fill();
 
-      // Sisi Atas
       ctx.fillStyle = topCol;
       ctx.beginPath();
-      ctx.moveTo(p00.x, p00.y);
-      ctx.lineTo(p10.x, p10.y);
-      ctx.lineTo(p11.x, p11.y);
-      ctx.lineTo(p01.x, p01.y);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(p00.x, p00.y); ctx.lineTo(p10.x, p10.y); ctx.lineTo(p11.x, p11.y); ctx.lineTo(p01.x, p01.y);
+      ctx.closePath(); ctx.fill();
     }
 
-    // Menggambar Karakter Kotak-Kotak (Minecraft Avatar) + Nametag
-    function drawBlockyCitizen(x, y, z, skin, shirt, username, phase) {
-      const bob = Math.abs(Math.sin(tick * 0.08 + phase)) * 0.15;
-      // Kaki
-      drawVoxel(x, y, z, 0.22, 0.22, 0.35, "#1e3a8a", "#1e3a8a", "#172554");
-      // Badan (Baju)
-      drawVoxel(x - 0.02, y - 0.02, z + 0.35 + bob, 0.26, 0.26, 0.4, shirt, shirt, "#0f172a");
-      // Kepala Kotak Minecraft
-      drawVoxel(x - 0.04, y - 0.04, z + 0.75 + bob, 0.30, 0.30, 0.32, "#451a03", skin, skin);
-
-      // Floating Minecraft Nametag
-      const tagPos = toIso(x + 0.1, y + 0.1, z + 1.35 + bob);
-      ctx.font = `bold ${Math.max(9, Math.floor(10 * zoom))}px Inter, sans-serif`;
-      const tw = ctx.measureText(username).width + 10;
-      ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
-      ctx.fillRect(tagPos.x - tw / 2, tagPos.y - 10, tw, 15);
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.fillText(username, tagPos.x, tagPos.y + 1);
-    }
-
-    // Menggambar Pohon Kotak (Minecraft Oak Tree)
+    // Pohon Oak Kotak (Hanya di Taman Air Mancur & Balai Desa)
     function drawVoxelTree(x, y, z) {
-      // Batang kayu
-      drawVoxel(x + 0.18, y + 0.18, z, 0.24, 0.24, 0.8, "#78350f", "#78350f", "#451a03");
-      // Daun berlapis kotak
-      drawVoxel(x - 0.15, y - 0.15, z + 0.7, 0.9, 0.9, 0.55, "#22c55e", "#16a34a", "#15803d");
-      drawVoxel(x, y, z + 1.25, 0.6, 0.6, 0.4, "#4ade80", "#22c55e", "#16a34a");
+      drawVoxel(x + 0.2, y + 0.2, z, 0.25, 0.25, 0.85, "#78350f", "#78350f", "#451a03");
+      drawVoxel(x - 0.15, y - 0.15, z + 0.75, 0.95, 0.95, 0.6, "#22c55e", "#16a34a", "#15803d");
+      drawVoxel(x, y, z + 1.35, 0.65, 0.65, 0.45, "#4ade80", "#22c55e", "#16a34a");
     }
 
-    // Render seluruh peta kota
+    // Gambar Balai Desa (Town Hall) di Pusat Kota (gx: 9..13, gy: 2..5)
+    function drawTownHall() {
+      const bx = 9, by = 2;
+      // Pondasi Batu Balai Desa
+      drawVoxel(bx, by, 0.01, 4, 3.2, 0.2, "#94a3b8", "#64748b", "#475569");
+      // Gedung Utama Balai Desa
+      const wallT = isNight ? "#e2e8f0" : "#ffffff";
+      const wallL = isNight ? "#cbd5e1" : "#f1f5f9";
+      const wallR = isNight ? "#94a3b8" : "#cbd5e1";
+      drawVoxel(bx + 0.3, by + 0.3, 0.21, 3.4, 2.4, 1.8, wallT, wallL, wallR);
+
+      // 4 Pilar Depan Balai Desa
+      [0.5, 1.3, 2.5, 3.3].forEach(px => {
+        drawVoxel(bx + px, by + 2.7, 0.21, 0.22, 0.22, 1.7, "#f8fafc", "#e2e8f0", "#94a3b8");
+      });
+
+      // Atap Merah Bata Klasik Bertingkat
+      drawVoxel(bx + 0.1, by + 0.1, 2.01, 3.8, 2.9, 0.35, "#dc2626", "#b91c1c", "#991b1b");
+      drawVoxel(bx + 0.5, by + 0.4, 2.36, 3.0, 2.2, 0.35, "#ef4444", "#dc2626", "#991b1b");
+
+      // Menara Jam (Clock Tower) di Atas Balai Desa
+      drawVoxel(bx + 1.5, by + 0.9, 2.71, 1.0, 1.0, 1.3, wallT, wallL, wallR);
+      drawVoxel(bx + 1.35, by + 0.75, 4.01, 1.3, 1.3, 0.4, "#f59e0b", "#d97706", "#b45309");
+      // Layar Jam Menyala
+      drawVoxel(bx + 1.75, by + 1.91, 3.1, 0.5, 0.05, 0.5, "#fde047", "#facc15", "#eab308");
+
+      // Label Balai Desa
+      const signPos = toIso(bx + 2, by + 1.5, 4.8);
+      ctx.font = `bold ${Math.max(10, Math.floor(11 * zoom))}px 'Press Start 2P', monospace`;
+      ctx.fillStyle = "#fde047";
+      ctx.textAlign = "center";
+      ctx.fillText("🏛️ TOWN HALL", signPos.x, signPos.y);
+    }
+
+    // Gambar Taman Air Mancur (Fountain Park) di Tengah Kota (gx: 9..13, gy: 7..11)
+    function drawFountainPark() {
+      const px = 9, py = 7;
+      // Lantai Batu Taman
+      drawVoxel(px, py, 0.01, 4, 4, 0.08, "#cbd5e1", "#94a3b8", "#64748b");
+
+      // Pohon Oak di 4 Sudut Taman
+      drawVoxelTree(px + 0.2, py + 0.2, 0.09);
+      drawVoxelTree(px + 3.1, py + 0.2, 0.09);
+      drawVoxelTree(px + 0.2, py + 3.1, 0.09);
+      drawVoxelTree(px + 3.1, py + 3.1, 0.09);
+
+      // Kolam Air Mancur Tengah
+      drawVoxel(px + 1.1, py + 1.1, 0.09, 1.8, 1.8, 0.35, "#e2e8f0", "#94a3b8", "#64748b");
+      drawVoxel(px + 1.25, py + 1.25, 0.15, 1.5, 1.5, 0.32, "#38bdf8", "#0284c7", "#0369a1");
+
+      // Pilar Air Mancur & Semburan Air Voxel Animasi
+      drawVoxel(px + 1.75, py + 1.75, 0.45, 0.5, 0.5, 0.8, "#f1f5f9", "#cbd5e1", "#94a3b8");
+      const splashH = 0.4 + Math.abs(Math.sin(tick * 0.1)) * 0.45;
+      drawVoxel(px + 1.8, py + 1.8, 1.25, 0.4, 0.4, splashH, "#7dd3fc", "#38bdf8", "#0284c7");
+
+      // Percikan Air Jatuh
+      const dropOffset = (tick * 0.05) % 0.6;
+      drawVoxel(px + 1.45, py + 1.9, 0.9 - dropOffset, 0.18, 0.18, 0.18, "#bae6fd", "#38bdf8", "#0284c7");
+      drawVoxel(px + 2.35, py + 1.9, 0.9 - dropOffset, 0.18, 0.18, 0.18, "#bae6fd", "#38bdf8", "#0284c7");
+    }
+
+    // Gambar Karakter MAYOR (Walikota) + Speech Bubble Bahasa Inggris
+    function drawMayor() {
+      // Mayor berjalan santai di depan Taman Air Mancur
+      const mx = 10.8 + Math.sin(tick * 0.025) * 0.7;
+      const my = 10.6;
+      const bob = Math.abs(Math.sin(tick * 0.1)) * 0.14;
+
+      // Kaki (Celana Formal Hitam)
+      drawVoxel(mx, my, 0.09, 0.26, 0.26, 0.4, "#0f172a", "#0f172a", "#020617");
+      // Badan (Jas Walikota + Dasi Merah)
+      drawVoxel(mx - 0.03, my - 0.03, 0.49 + bob, 0.32, 0.32, 0.45, "#1e293b", "#0f172a", "#020617");
+      drawVoxel(mx + 0.08, my + 0.26, 0.55 + bob, 0.1, 0.05, 0.32, "#ef4444", "#dc2626", "#b91c1c");
+      // Kepala Kotak Minecraft
+      drawVoxel(mx - 0.05, my - 0.05, 0.94 + bob, 0.36, 0.36, 0.36, "#fde68a", "#fcd34d", "#f59e0b");
+      // Topi/Mahkota Emas Mayor
+      drawVoxel(mx - 0.07, my - 0.07, 1.30 + bob, 0.40, 0.40, 0.18, "#facc15", "#eab308", "#ca8a04");
+
+      // Nametag Mayor
+      const pos = toIso(mx + 0.15, my + 0.15, 1.75 + bob);
+      ctx.font = `bold ${Math.max(10, Math.floor(11 * zoom))}px Inter, sans-serif`;
+      ctx.fillStyle = "#facc15";
+      ctx.textAlign = "center";
+      ctx.fillText("👑 MAYOR OF NEXATON", pos.x, pos.y);
+
+      // SPEECH BUBBLE: "Come move to NexatonCity!"
+      const bubbleY = pos.y - 24;
+      const speechText = "💬 \"Come move to NexatonCity! Follow to claim a FREE house!\"";
+      ctx.font = `bold ${Math.max(11, Math.floor(12 * zoom))}px Inter, sans-serif`;
+      const bw = ctx.measureText(speechText).width + 24;
+      const bh = 28;
+
+      // Kotak Bubble Putih dengan Garis Tepi Emas
+      ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(pos.x - bw / 2, bubbleY - bh, bw, bh, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Segitiga Penunjuk Bubble
+      ctx.beginPath();
+      ctx.moveTo(pos.x - 6, bubbleY);
+      ctx.lineTo(pos.x + 6, bubbleY);
+      ctx.lineTo(pos.x, bubbleY + 7);
+      ctx.closePath();
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      // Teks di dalam Speech Bubble
+      ctx.fillStyle = "#0f172a";
+      ctx.fillText(speechText, pos.x, bubbleY - 9);
+    }
+
     function renderCityMap() {
-      ctx.fillStyle = isNight ? "#090d16" : "#38bdf8";
+      ctx.fillStyle = isNight ? "#060913" : "#38bdf8";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      clickableHouses = [];
-      const gridW = 15;
-      const gridH = 12;
+      clickableZones = [];
 
-      // 1. Gambar Lempengan Tanah, Jalan Raya TheoTown, dan Sungai
-      for (let gx = 0; gx < gridW; gx++) {
-        for (let gy = 0; gy < gridH; gy++) {
-          const isRoadY = (gy === 3 || gy === 4);
-          const isCanal = (gx === 12);
+      // 1. Gambar Lahan Luas (22x20) & Jalan Raya Kota
+      for (let gx = 0; gx < GRID_W; gx++) {
+        for (let gy = 0; gy < GRID_H; gy++) {
+          const isMainRoadY = (gy === 5 || gy === 12);
+          const isMainRoadX = (gx === 8 || gx === 13);
+          const isRoad = isMainRoadY || isMainRoadX;
 
-          if (isCanal) {
-            const wave = Math.sin(tick * 0.05 + gy) * 0.04;
-            drawVoxel(gx, gy, -0.35 + wave, 1, 1, 0.25, "#0284c7", "#0369a1", "#075985");
-          } else if (isRoadY) {
-            // Jalan Aspal TheoTown
+          if (isRoad) {
             drawVoxel(gx, gy, -0.2, 1, 1, 0.2, "#334155", "#1e293b", "#0f172a");
-            // Marka jalan putus-putus
-            if (gy === 3 && gx % 2 === 0) {
-              drawVoxel(gx + 0.25, gy + 0.92, 0.01, 0.5, 0.12, 0.02, "#facc15", "#eab308", "#ca8a04");
+            if ((isMainRoadY && gx % 2 === 0) || (isMainRoadX && gy % 2 === 0)) {
+              drawVoxel(gx + 0.35, gy + 0.35, 0.01, 0.3, 0.3, 0.02, "#facc15", "#eab308", "#ca8a04");
             }
           } else {
-            // Rumput Voxel
-            const topGrass = isNight ? "#14532d" : ((gx + gy) % 2 === 0 ? "#4ade80" : "#22c55e");
-            drawVoxel(gx, gy, -0.2, 1, 1, 0.2, topGrass, "#15803d", "#166534");
+            const grassCol = isNight ? "#14532d" : ((gx + gy) % 2 === 0 ? "#4ade80" : "#22c55e");
+            drawVoxel(gx, gy, -0.2, 1, 1, 0.2, grassCol, "#15803d", "#166534");
           }
         }
       }
 
-      // 2. Gambar Kavling Rumah Warga
-      citizens.forEach((c, idx) => {
-        const baseX = c.gx * 3;
-        const baseY = c.gy * 3;
+      // 2. Gambar Balai Desa & Taman Air Mancur di Tengah Peta
+      drawTownHall();
+      drawFountainPark();
 
-        // Jika sudah komen: Dapat Halaman Rumput Cerah + Pagar + Pohon Oak
-        if (c.hasCommented) {
-          drawVoxel(baseX + 0.1, baseY + 0.1, 0.01, 2.6, 2.6, 0.06, isNight ? "#065f46" : "#86efac", "#16a34a", "#15803d");
-          // Pagar kayu kotak-kotak di sekeliling halaman
-          for (let f = 0.15; f <= 2.55; f += 0.4) {
-            drawVoxel(baseX + f, baseY + 0.12, 0.07, 0.18, 0.12, 0.25, "#fef3c7", "#d97706", "#b45309");
-            drawVoxel(baseX + f, baseY + 2.55, 0.07, 0.18, 0.12, 0.25, "#fef3c7", "#d97706", "#b45309");
-          }
-          // Pohon Oak Minecraft di pojok halaman
-          drawVoxelTree(baseX + 0.25, baseY + 1.85, 0.07);
-        }
+      // 3. Gambar 12 Rumah Subsidi Kosong (Bentuk Sama, Warna Atap Beda, Tanpa Warga/Pohon/Pagar)
+      emptyHouses.forEach((h) => {
+        const bx = h.gx;
+        const by = h.gy;
 
-        const isVIP = c.decor !== null;
-        const wallTop = isNight ? "#cbd5e1" : "#ffffff";
-        const wallLeft = isNight ? "#94a3b8" : "#f1f5f9";
-        const wallRight = isNight ? "#64748b" : "#cbd5e1";
+        // Lantai Kavling Semen Standar
+        drawVoxel(bx, by, 0.01, 2.2, 2.2, 0.05, "#cbd5e1", "#94a3b8", "#64748b");
 
-        if (isVIP) {
-          // Bangunan Upgrade (Cyber Villa / Penthouse 2 Lantai + Neon)
-          drawVoxel(baseX + 0.7, baseY + 0.5, 0.07, 1.5, 1.5, 1.2, wallTop, wallLeft, wallRight);
-          drawVoxel(baseX + 0.8, baseY + 0.6, 1.27, 1.3, 1.3, 0.9, "#38bdf8", "#0284c7", "#0369a1");
-          drawVoxel(baseX + 0.6, baseY + 0.4, 2.17, 1.7, 1.7, 0.25, "#f59e0b", "#d97706", "#b45309");
-        } else {
-          // Rumah Subsidi (Bentuk Sama, Warna Atap Berbeda Tiap Warga)
-          drawVoxel(baseX + 0.8, baseY + 0.6, 0.07, 1.3, 1.3, 0.95, wallTop, wallLeft, wallRight);
-          // Atap Bertingkat Voxel (Warna Unik)
-          drawVoxel(baseX + 0.68, baseY + 0.48, 1.02, 1.54, 1.54, 0.28, c.roof, c.roof, "#0f172a");
-          drawVoxel(baseX + 0.85, baseY + 0.65, 1.30, 1.2, 1.2, 0.25, c.roof, c.roof, "#0f172a");
-        }
+        // Dinding Rumah Subsidi Voxel
+        const wTop = isNight ? "#cbd5e1" : "#ffffff";
+        const wLeft = isNight ? "#94a3b8" : "#f1f5f9";
+        const wRight = isNight ? "#64748b" : "#cbd5e1";
+        drawVoxel(bx + 0.4, by + 0.4, 0.06, 1.4, 1.4, 1.0, wTop, wLeft, wRight);
 
-        // Jendela (Menyala Kuning Hangat Saat Malam!)
-        const winCol = isNight ? "#fde047" : "#38bdf8";
-        drawVoxel(baseX + 1.1, baseY + 1.91, 0.45, 0.35, 0.05, 0.35, winCol, winCol, winCol);
-        drawVoxel(baseX + 1.65, baseY + 1.91, 0.45, 0.35, 0.05, 0.35, winCol, winCol, winCol);
+        // Atap Rumah Subsidi (Warna Unik Tiap Kavling)
+        drawVoxel(bx + 0.28, by + 0.28, 1.06, 1.64, 1.64, 0.28, h.roof, h.roof, "#0f172a");
+        drawVoxel(bx + 0.45, by + 0.45, 1.34, 1.3, 1.3, 0.24, h.roof, h.roof, "#0f172a");
 
-        // Karakter Minecraft Warga Berjalan di Halaman Rumahnya
-        const walkX = baseX + 1.3 + Math.sin(tick * 0.03 + idx) * 0.55;
-        const walkY = baseY + 2.15 + Math.cos(tick * 0.03 + idx) * 0.2;
-        drawBlockyCitizen(walkX, walkY, 0.07, c.skin, c.shirt, c.username, idx);
+        // Pintu & Jendela (Gelap karena belum dihuni, atau remang saat malam)
+        const winCol = isNight ? "#38bdf8" : "#94a3b8";
+        drawVoxel(bx + 0.95, by + 1.81, 0.06, 0.3, 0.04, 0.55, h.roof, h.roof, "#0f172a");
+        drawVoxel(bx + 0.55, by + 1.81, 0.45, 0.28, 0.04, 0.28, winCol, winCol, winCol);
+        drawVoxel(bx + 1.35, by + 1.81, 0.45, 0.28, 0.04, 0.28, winCol, winCol, winCol);
 
-        // Highlight jika dicari di kolom Search
-        if (highlightedId === c.id) {
-          const ringPos = toIso(baseX + 1.4, baseY + 1.2, 2.4 + Math.sin(tick * 0.1) * 0.2);
-          ctx.fillStyle = "#facc15";
-          ctx.font = "bold 16px Inter";
-          ctx.textAlign = "center";
-          ctx.fillText("⬇ HERE!", ringPos.x, ringPos.y);
-        }
+        // Label Kavling Kosong
+        const labelPos = toIso(bx + 1.1, by + 1.1, 1.95);
+        ctx.font = `bold ${Math.max(8, Math.floor(9 * zoom))}px Inter, sans-serif`;
+        const text = `🏠 ${h.lotName} (EMPTY)`;
+        const tw = ctx.measureText(text).width + 8;
+        ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+        ctx.fillRect(labelPos.x - tw / 2, labelPos.y - 9, tw, 13);
+        ctx.fillStyle = "#e2e8f0";
+        ctx.textAlign = "center";
+        ctx.fillText(text, labelPos.x, labelPos.y + 1);
 
-        // Simpan koordinat klik untuk Masuk Rumah
-        const centerScreen = toIso(baseX + 1.4, baseY + 1.2, 0.7);
-        clickableHouses.push({ citizen: c, x: centerScreen.x, y: centerScreen.y, r: 48 * zoom });
+        // Simpan area klik
+        const clickPos = toIso(bx + 1.1, by + 1.1, 0.7);
+        clickableZones.push({ house: h, x: clickPos.x, y: clickPos.y, r: 42 * zoom });
       });
 
-      // 3. Gambar Lahan Infrastruktur & Billboard Sponsor Toko
-      infraLots.forEach((lot) => {
-        const lx = lot.gx * 3;
-        const ly = lot.gy * 3;
-        drawVoxel(lx + 0.2, ly + 0.2, 0.02, 2.4, 2.4, 0.1, "#94a3b8", "#64748b", "#475569");
-
-        if (lot.isSponsor) {
-          // Menara Sponsor Toko Shopify
-          drawVoxel(lx + 0.8, ly + 0.8, 0.12, 1.2, 1.2, 2.2, "#f59e0b", "#4f46e5", "#312e81");
-          const topSign = toIso(lx + 1.4, ly + 1.4, 2.6);
-          ctx.fillStyle = "#fde047";
-          ctx.font = `bold ${Math.max(10, Math.floor(11 * zoom))}px Inter`;
-          ctx.textAlign = "center";
-          ctx.fillText("⚡ SHOP & UPGRADE", topSign.x, topSign.y);
-        } else {
-          // Tiang Konstruksi Menunggu Request Warga
-          drawVoxel(lx + 0.5, ly + 0.5, 0.12, 0.2, 0.2, 1.1, "#f97316", "#ea580c", "#9a3412");
-          const txtPos = toIso(lx + 1.4, ly + 1.4, 1.2);
-          ctx.fillStyle = "#f8fafc";
-          ctx.font = `bold ${Math.max(9, Math.floor(10 * zoom))}px Inter`;
-          ctx.textAlign = "center";
-          ctx.fillText("🏗️ " + lot.label, txtPos.x, txtPos.y);
-          ctx.fillStyle = "#cbd5e1";
-          ctx.font = `${Math.max(8, Math.floor(9 * zoom))}px Inter`;
-          ctx.fillText(lot.sub, txtPos.x, txtPos.y + 13);
-        }
-      });
+      // 4. Gambar Mayor + Bubble Chat di paling atas layer
+      drawMayor();
 
       tick++;
       requestAnimationFrame(renderCityMap);
     }
 
     // =========================================================
-    // 3. INTERAKSI GESER PETA (DRAG), ZOOM, DAN KLIK RUMAH
+    // 3. KONTROL KAMERA, PENCARIAN & KLIK RUMAH KOSONG
     // =========================================================
     canvas.addEventListener("pointerdown", (e) => {
       isDragging = true;
@@ -440,9 +452,9 @@
         const mx = e.clientX - rect.left;
         const my = e.clientY - rect.top;
 
-        for (let h of clickableHouses) {
-          if (Math.hypot(mx - h.x, my - h.y) <= h.r) {
-            openInterior(h.citizen);
+        for (let z of clickableZones) {
+          if (Math.hypot(mx - z.x, my - z.y) <= z.r) {
+            openInterior(z.house);
             break;
           }
         }
@@ -450,13 +462,12 @@
     });
 
     function adjustZoom(delta) {
-      zoom = Math.min(1.6, Math.max(0.55, zoom + delta));
+      zoom = Math.min(1.5, Math.max(0.5, zoom + delta));
     }
 
     function resetCamera() {
       camX = window.innerWidth / 2;
-      camY = 140;
-      highlightedId = null;
+      camY = 95;
     }
 
     function toggleNightMode() {
@@ -468,129 +479,77 @@
       const t = document.getElementById("toastMsg");
       t.textContent = msg;
       t.classList.remove("hidden");
-      setTimeout(() => t.classList.add("hidden"), 3500);
+      setTimeout(() => t.classList.add("hidden"), 4000);
     }
 
-    function findCitizen() {
+    function findPlot() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       if (!q) return;
-      const found = citizens.find(c => c.username.toLowerCase().includes(q));
-      if (found) {
-        highlightedId = found.id;
-        const target = toIso(found.gx * 3 + 1.4, found.gy * 3 + 1.2, 0);
-        camX += (window.innerWidth / 2 - target.x);
-        camY += (window.innerHeight / 2 - target.y);
-        showToast(`Found ${found.username}! Tap their house to enter inside.`);
+      if (q.includes("mayor")) {
+        resetCamera();
+        showToast("👑 Here is the Mayor at the Central Fountain Plaza!");
       } else {
-        showToast(`Citizen "${q}" not found! Follow @NexatonCity to get a free block house.`);
+        showToast(`No citizen named "${q}" yet! Follow @NexatonCity on TikTok to claim one of the 12 empty houses!`);
       }
     }
 
     // =========================================================
-    // 4. RENDER INTERIOR KAMAR 3D VOXEL (SAAT MASUK RUMAH)
+    // 4. INTERIOR RUMAH SUBSIDI KOSONG (SAAT DIKLIK)
     // =========================================================
     const roomCanvas = document.getElementById("roomCanvas");
     const rctx = roomCanvas.getContext("2d");
-    let roomAnimId = null;
 
-    function openInterior(citizen) {
-      selectedCitizen = citizen;
-      document.getElementById("roomOwner").textContent = citizen.username;
-      document.getElementById("roomBadge").textContent = citizen.tier;
-      document.getElementById("statHouse").textContent = citizen.tier.replace(" House", "");
-      document.getElementById("statYard").textContent = citizen.hasCommented ? "Fence + Tree ✓" : "Comment to Unlock";
-      document.getElementById("statDecor").textContent = citizen.decor ? citizen.decor : "Empty Desk 🔒";
+    function openInterior(house) {
+      selectedHouse = house;
+      document.getElementById("roomTitle").textContent = `Subsidized ${house.lotName}`;
       document.getElementById("interiorModal").classList.remove("hidden");
-
-      if (roomAnimId) cancelAnimationFrame(roomAnimId);
-      animateInterior();
+      drawEmptyRoom();
     }
 
     function closeInterior() {
       document.getElementById("interiorModal").classList.add("hidden");
-      if (roomAnimId) cancelAnimationFrame(roomAnimId);
     }
 
-    function animateInterior() {
-      if (!selectedCitizen) return;
+    function drawEmptyRoom() {
       rctx.fillStyle = "#0f172a";
       rctx.fillRect(0, 0, roomCanvas.width, roomCanvas.height);
 
-      // Lantai Kayu Kotak-Kotak (Isometric Room Cutaway)
+      // Lantai Kayu Voxel Kosong
       rctx.fillStyle = "#78350f";
       rctx.beginPath();
-      rctx.moveTo(210, 80);
-      rctx.lineTo(360, 155);
-      rctx.lineTo(210, 230);
-      rctx.lineTo(60, 155);
-      rctx.closePath();
-      rctx.fill();
+      rctx.moveTo(210, 75); rctx.lineTo(360, 150); rctx.lineTo(210, 225); rctx.lineTo(60, 150);
+      rctx.closePath(); rctx.fill();
 
       // Dinding Kiri & Kanan
       rctx.fillStyle = "#334155";
       rctx.beginPath();
-      rctx.moveTo(60, 155); rctx.lineTo(210, 80); rctx.lineTo(210, 20); rctx.lineTo(60, 95);
+      rctx.moveTo(60, 150); rctx.lineTo(210, 75); rctx.lineTo(210, 20); rctx.lineTo(60, 95);
       rctx.closePath(); rctx.fill();
 
       rctx.fillStyle = "#1e293b";
       rctx.beginPath();
-      rctx.moveTo(210, 80); rctx.lineTo(360, 155); rctx.lineTo(360, 95); rctx.lineTo(210, 20);
+      rctx.moveTo(210, 75); rctx.lineTo(360, 150); rctx.lineTo(360, 95); rctx.lineTo(210, 20);
       rctx.closePath(); rctx.fill();
 
-      // Kasur Minecraft (Merah-Putih) di Pojok Kamar
-      rctx.fillStyle = "#ef4444";
+      // Kasur Standar Subsidi
+      rctx.fillStyle = selectedHouse ? selectedHouse.roof : "#0ea5e9";
       rctx.fillRect(115, 115, 48, 24);
       rctx.fillStyle = "#ffffff";
       rctx.fillRect(115, 115, 16, 24);
 
-      // Meja Kotak untuk Barang Shopify
-      rctx.fillStyle = "#b45309";
-      rctx.fillRect(265, 125, 42, 26);
+      // Plang "FOR FREE / UNCLAIMED" di Tengah Kamar
+      rctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      rctx.fillRect(135, 135, 150, 34);
+      rctx.strokeStyle = "#38bdf8";
+      rctx.strokeRect(135, 135, 150, 34);
 
-      if (selectedCitizen.decor) {
-        // Efek Produk Menyala di Atas Meja
-        const floatY = Math.sin(tick * 0.1) * 4;
-        rctx.fillStyle = "#38bdf8";
-        rctx.beginPath();
-        rctx.arc(286, 110 + floatY, 12, 0, Math.PI * 2);
-        rctx.fill();
-        rctx.fillStyle = "#fde047";
-        rctx.font = "bold 10px Inter";
-        rctx.textAlign = "center";
-        rctx.fillText("✨ " + selectedCitizen.decor, 286, 90);
-      } else {
-        rctx.fillStyle = "#94a3b8";
-        rctx.font = "bold 10px Inter";
-        rctx.textAlign = "center";
-        rctx.fillText("🔒 Empty Desk (Shop Item)", 286, 115);
-      }
-
-      // Karakter Minecraft Warga Melompat Senang di Dalam Kamarnya
-      const jump = Math.abs(Math.sin(tick * 0.12)) * 8;
-      const cx = 195, cy = 150 - jump;
-      // Kaki
-      rctx.fillStyle = "#1e3a8a";
-      rctx.fillRect(cx, cy + 22, 8, 14);
-      rctx.fillRect(cx + 10, cy + 22, 8, 14);
-      // Baju
-      rctx.fillStyle = selectedCitizen.shirt;
-      rctx.fillRect(cx - 2, cy + 4, 22, 18);
-      // Kepala Kotak + Mata
-      rctx.fillStyle = selectedCitizen.skin;
-      rctx.fillRect(cx - 3, cy - 18, 24, 22);
-      rctx.fillStyle = "#0f172a";
-      rctx.fillRect(cx + 2, cy - 10, 4, 4);
-      rctx.fillRect(cx + 12, cy - 10, 4, 4);
-
-      // Speech Bubble Warga
-      rctx.fillStyle = "rgba(255,255,255,0.95)";
-      rctx.fillRect(cx - 45, cy - 44, 115, 18);
-      rctx.fillStyle = "#0f172a";
-      rctx.font = "bold 10px Inter";
+      rctx.fillStyle = "#fde047";
+      rctx.font = "bold 11px Inter";
       rctx.textAlign = "center";
-      rctx.fillText(selectedCitizen.decor ? "I love my VIP room!" : "Welcome to my house!", cx + 12, cy - 32);
-
-      roomAnimId = requestAnimationFrame(animateInterior);
+      rctx.fillText("🏠 UNCLAIMED ROOM", 210, 150);
+      rctx.fillStyle = "#cbd5e1";
+      rctx.font = "10px Inter";
+      rctx.fillText("Follow @NexatonCity to Move In!", 210, 163);
     }
 
     renderCityMap();
