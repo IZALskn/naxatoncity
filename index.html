@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NexatonCity - Living Ecosystem & Seasons</title>
+  <title>NexatonCity - Synchronized 3D Voxel World</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -36,13 +36,14 @@
       border: 3px solid #b45309;
       box-shadow: inset -2px -2px 0px #78350f, inset 2px 2px 0px #fde68a;
     }
-    #webgl-container { width: 100%; height: 100%; display: block; }
+    #webgl-container { width: 100%; height: 100%; display: block; cursor: grab; }
+    #webgl-container:active { cursor: grabbing; }
     #mayorBubble {
       position: fixed;
       z-index: 12;
       pointer-events: none;
       transform: translate(-50%, -100%);
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, transform 0.15s;
     }
     .house-label {
       position: fixed;
@@ -60,31 +61,27 @@
   <!-- FLOATING LABELS FOR HOUSES -->
   <div id="labelsContainer"></div>
 
-  <!-- FLOATING MAYOR SPEECH BUBBLE -->
-  <div id="mayorBubble" class="bg-white px-3.5 py-2 rounded-2xl shadow-xl text-center max-w-[245px]" style="border: 3px solid #0f172a;">
-    <div class="text-[10px] font-extrabold uppercase text-amber-600 tracking-wider">🎩 @mayorofnexatoncity</div>
+  <!-- FLOATING MAYOR SPEECH BUBBLE (SHORT ROTATING CHUNKS) -->
+  <div id="mayorBubble" class="bg-white px-3.5 py-2 rounded-2xl shadow-xl text-center min-w-[160px] max-w-[220px]" style="border: 3px solid #0f172a;">
+    <div class="text-[9px] font-extrabold uppercase text-amber-600 tracking-wider">🎩 @mayorofnexatoncity</div>
     <div id="mayorSpeechText" class="text-xs font-extrabold text-slate-900 leading-snug mt-0.5">
-      "Come move to NexatonCity! Claim your FREE Subsidized House today!"
+      "Welcome to NexatonCity! 🏙️"
     </div>
     <div class="w-3 h-3 bg-white rotate-45 mx-auto -mb-3.5 mt-1" style="border-right:3px solid #0f172a; border-bottom:3px solid #0f172a;"></div>
   </div>
 
-  <!-- EXIT CINEMATIC RECORDING BUTTON (HIDDEN UNLESS RECORDING) -->
-  <button id="exitCinematicBtn" onclick="toggleCinematicMode()" class="fixed top-4 right-4 z-50 hidden bg-rose-600/90 text-white text-xs font-black px-4 py-2 rounded-xl border-2 border-white shadow-lg">
-    ⏹️ Stop TikTok Recording Mode
-  </button>
-
-  <!-- TOP GAME HUD -->
-  <div id="topHud" class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+  <!-- TOP GAME HUD (CLEAN & SYNCHRONIZED) -->
+  <div class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
     <div class="mc-panel px-3.5 py-2.5 rounded-xl text-white flex items-center gap-3 pointer-events-auto">
       <div class="text-2xl">🎩</div>
       <div>
         <div class="flex items-center gap-2">
           <h1 class="pixel-font text-xs sm:text-sm text-sky-400">NEXATON CITY</h1>
           <span id="seasonBadge" class="bg-pink-500/20 border border-pink-400 text-pink-300 text-[10px] font-bold px-1.5 py-0.5 rounded">🌸 SAKURA</span>
+          <span id="timeBadge" class="bg-sky-500/20 border border-sky-400 text-sky-300 text-[10px] font-bold px-1.5 py-0.5 rounded">☀️ DAY</span>
         </div>
         <p class="text-[11px] text-slate-300 mt-1">
-          👥 Citizens: <span id="hudCitizens" class="text-emerald-400 font-bold">0</span> | 🏠 Empty: <span id="hudEmpty" class="text-white font-bold">12</span> | <span id="wildlifeStatus" class="text-amber-300 font-bold">🐦 Birds Active</span>
+          👥 Citizens: <span id="hudCitizens" class="text-emerald-400 font-bold">2</span> | 🏠 Empty: <span id="hudEmpty" class="text-white font-bold">10</span> | 🌐 <span class="text-amber-300 font-bold">Global Live Sync</span>
         </p>
       </div>
     </div>
@@ -94,7 +91,7 @@
       <input
         id="searchInput"
         type="text"
-        placeholder="Find @username..."
+        placeholder="Find @steve, @alex, or @you..."
         class="bg-slate-900 text-white text-xs px-3 py-2 rounded-lg w-full border border-slate-700 focus:outline-none focus:border-sky-400"
         onkeydown="if(event.key==='Enter') searchCitizen()"
       />
@@ -103,22 +100,13 @@
       </button>
     </div>
 
-    <!-- Action Controls -->
-    <div class="flex flex-wrap items-center gap-1.5 pointer-events-auto">
-      <button onclick="openClaimModal()" class="mc-btn-emerald text-slate-950 font-black text-xs px-3 py-2.5 rounded-xl flex items-center gap-1">
-        <span>🏠</span> <span>CLAIM HOUSE</span>
+    <!-- Clean Main Actions Only -->
+    <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
+      <button onclick="openClaimModal()" class="mc-btn-emerald text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
+        <span>🏠</span> <span>CLAIM FREE HOUSE</span>
       </button>
-      <button onclick="cycleSeason()" id="seasonBtn" class="mc-panel px-3 py-2.5 rounded-xl text-pink-300 text-xs font-bold" title="Change Season / Weather">
-        🌸 Weather
-      </button>
-      <button onclick="toggleNightMode()" id="nightBtn" class="mc-panel px-3 py-2.5 rounded-xl text-white text-xs font-bold" title="Toggle Day / Night">
-        🌙 Night
-      </button>
-      <button onclick="toggleCinematicMode()" class="mc-panel px-3 py-2.5 rounded-xl text-amber-300 text-xs font-bold" title="Auto-Rotate & Hide UI for TikTok Video">
-        🎬 TikTok Cam
-      </button>
-      <a href="https://pevcsr-r6.myshopify.com" target="_blank" class="mc-btn-gold text-slate-950 font-black text-xs px-3 py-2.5 rounded-xl flex items-center gap-1">
-        <span>🛒</span> <span class="hidden sm:inline">SHOP</span>
+      <a href="https://pevcsr-r6.myshopify.com" target="_blank" class="mc-btn-gold text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
+        <span>🛒</span> <span>UPGRADE SHOP</span>
       </a>
     </div>
   </div>
@@ -126,26 +114,13 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toastMsg" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 hidden mc-panel px-4 py-2.5 rounded-xl text-xs font-bold text-amber-300 text-center"></div>
 
-  <!-- BOTTOM HUD & CAMERA D-PAD -->
-  <div id="bottomHud" class="fixed bottom-3 left-3 right-3 z-20 flex flex-wrap items-end justify-between gap-2 pointer-events-none">
+  <!-- BOTTOM INFO BAR (NO ARROW CLUTTER) -->
+  <div class="fixed bottom-3 left-3 right-3 z-20 flex items-end justify-between pointer-events-none">
     <div class="mc-panel p-3 rounded-xl text-white pointer-events-auto max-w-md">
-      <div class="pixel-font text-[9px] text-emerald-400 mb-1">🌦️ AUTO-SEASON & WILDLIFE ECOLOGY</div>
+      <div class="pixel-font text-[9px] text-emerald-400 mb-1">🌍 EPISODE 1: STEVE & ALEX MOVED IN!</div>
       <p class="text-[11px] text-slate-300 leading-relaxed">
-        ☀️ <strong>Day:</strong> Birds fly in the sky | 🌙 <strong>Night:</strong> Birds sleep, glowing <strong>Fireflies & Owls</strong> appear! Weather rotates every few days (Clear, Rain, Snow, Autumn, Sakura).
+        Drag with 1 finger to pan around the city, pinch/scroll to zoom, or tap any house to enter its 3D room. Season & day/night cycle automatically for all citizens worldwide!
       </p>
-    </div>
-
-    <div class="flex items-center gap-1.5 pointer-events-auto">
-      <button onclick="toggleCameraMode()" id="camModeBtn" class="mc-panel px-3 h-10 rounded-xl text-sky-300 text-xs font-bold">
-        ✋ Geser
-      </button>
-      <button onclick="panCamera(-6, 0)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">◀</button>
-      <div class="flex flex-col gap-1.5">
-        <button onclick="panCamera(0, -6)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▲</button>
-        <button onclick="panCamera(0, 6)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▼</button>
-      </div>
-      <button onclick="panCamera(6, 0)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▶</button>
-      <button onclick="resetCamera()" class="mc-panel w-10 h-10 rounded-xl text-amber-300 font-bold text-sm" title="Center on Mayor">🎯</button>
     </div>
   </div>
 
@@ -163,7 +138,7 @@
       <div class="p-5 space-y-4">
         <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-700 space-y-2">
           <div class="text-xs font-extrabold text-sky-400">STEP 1: FOLLOW THE MAYOR ON TIKTOK</div>
-          <p class="text-[11px] text-slate-300">Every follower gets 1 free Subsidized House equipped with electricity, clean water tank, and starter furniture.</p>
+          <p class="text-[11px] text-slate-300">Join Steve & Alex in Block A! Every follower gets a free Subsidized House equipped with electricity and clean water.</p>
           <a href="https://www.tiktok.com/@mayorofnexatoncity" target="_blank" onclick="unlockClaimStep()"
              class="mc-btn w-full py-2.5 rounded-xl text-center text-slate-950 font-black text-xs block">
             ➕ Follow @mayorofnexatoncity on TikTok
@@ -175,7 +150,7 @@
           <input
             id="claimUsernameInput"
             type="text"
-            placeholder="e.g. @alex_vibes"
+            placeholder="e.g. @your_username"
             class="w-full bg-slate-950 text-white text-sm px-3.5 py-2.5 rounded-xl border border-slate-600 focus:outline-none focus:border-emerald-400"
           />
           <div class="flex items-center gap-2 text-[11px] text-slate-300">
@@ -196,7 +171,7 @@
     <div class="mc-panel rounded-2xl max-w-md w-full overflow-hidden text-white shadow-2xl">
       <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">3D VOXEL CUTAWAY ROOM</span>
+          <span id="roomTierBadge" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">3D VOXEL CUTAWAY ROOM</span>
           <h2 id="roomTitle" class="pixel-font text-xs sm:text-sm text-white mt-1.5">SUBSIDIZED HOUSE #1</h2>
         </div>
         <button onclick="closeInterior()" class="bg-rose-600 hover:bg-rose-500 text-white font-black w-8 h-8 rounded-lg border-2 border-rose-400">✕</button>
@@ -219,12 +194,12 @@
             <div id="infoCitizen" class="font-bold text-emerald-400 mt-0.5 truncate">Empty Plot</div>
           </div>
           <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
-            <div class="text-slate-400 text-[10px]">UTILITIES</div>
-            <div class="font-bold text-sky-400 mt-0.5">Water + Grid ✓</div>
+            <div class="text-slate-400 text-[10px]">BUILDING</div>
+            <div id="infoBuilding" class="font-bold text-sky-400 mt-0.5">Subsidized</div>
           </div>
           <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
             <div class="text-slate-400 text-[10px]">ROOM DECOR</div>
-            <div class="font-bold text-amber-400 mt-0.5">Shop Upgrade 🛍️</div>
+            <div id="infoDecor" class="font-bold text-amber-400 mt-0.5">Shop Upgrade 🛍️</div>
           </div>
         </div>
 
@@ -235,7 +210,7 @@
 
   <script>
     // =========================================================
-    // 0. KONEKSI SUPABASE
+    // 0. KONEKSI SUPABASE & WARGA DEFAULT EPISODE 1 (STEVE & ALEX)
     // =========================================================
     const SUPABASE_URL = "https://rrxgvmnfwzuwespocmpr.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_n3eXwqjlZO-uVUW9ZOirHw_50W-7MkX";
@@ -246,8 +221,14 @@
       console.warn("Supabase fallback:", e);
     }
 
+    // Default Citizens Episode 1: Kavling #1 = Steve, Kavling #2 = Alex
+    const defaultEpisode1Citizens = {
+      1: { username: "@steve", tier: "subsidized", decor: null, isDefaultNPC: true },
+      2: { username: "@alex", tier: "subsidized", decor: null, isDefaultNPC: true }
+    };
+
     // =========================================================
-    // 1. SETUP ENGINE 3D UTAMA + ORBIT CONTROLS
+    // 1. SETUP ENGINE 3D UTAMA + KONTROL GESER LANGSUNG
     // =========================================================
     const container = document.getElementById("webgl-container");
     const scene = new THREE.Scene();
@@ -271,43 +252,16 @@
     controls.minDistance = 10;
     controls.maxDistance = 85;
     controls.target.set(0, 0, 2);
+    // 1 jari / klik kiri untuk geser peta (Pan), 2 jari / klik kanan untuk putar
+    controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+    controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 
-    let isPanMode = true;
-    let isCinematic = false;
-
-    function applyControlMode() {
-      if (isPanMode) {
-        controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
-        controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
-        document.getElementById("camModeBtn").textContent = "✋ Geser";
-      } else {
-        controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
-        controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
-        document.getElementById("camModeBtn").textContent = "🔄 Putar";
-      }
-    }
-    applyControlMode();
-
-    function toggleCameraMode() { isPanMode = !isPanMode; applyControlMode(); }
-    function panCamera(dx, dz) { camera.position.x += dx; camera.position.z += dz; controls.target.x += dx; controls.target.z += dz; }
-    function resetCamera() { camera.position.set(0, 28, 38); controls.target.set(0, 0, 2); }
-
-    // Mode Rekam Video TikTok (Sembunyikan UI & Putar Kamera Mulus)
-    function toggleCinematicMode() {
-      isCinematic = !isCinematic;
-      controls.autoRotate = isCinematic;
-      controls.autoRotateSpeed = 1.6;
-      document.getElementById("topHud").classList.toggle("hidden", isCinematic);
-      document.getElementById("bottomHud").classList.toggle("hidden", isCinematic);
-      document.getElementById("exitCinematicBtn").classList.toggle("hidden", !isCinematic);
-      if (isCinematic) {
-        controls.target.set(0, 2, 0);
-        camera.position.set(0, 24, 36);
-      }
-    }
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.35);
+    hemiLight.position.set(0, 50, 0);
+    scene.add(hemiLight);
 
     const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.25);
     sunLight.position.set(32, 50, 28);
@@ -336,8 +290,12 @@
     let groundMesh = null;
     let turbineBlades = null;
     let mayorGroup = null;
+    let mayorHatGroup = null;
+    let mayorLeftLeg = null, mayorRightLeg = null, mayorLeftArm = null, mayorRightArm = null;
+    let bananaPeelMesh = null;
     let tick = 0;
     let isNight = false;
+    let currentSeasonIdx = 0;
     let preselectedHouseId = null;
 
     function createBlock(w, h, d, hexColor, x, y, z, cast = true, receive = true) {
@@ -351,9 +309,8 @@
     }
 
     // =========================================================
-    // 2. INFRASTRUKTUR, POHON MUSIMAN, BURUNG, KUNANG-KUNANG & CUACA
+    // 2. INFRASTRUKTUR, BURUNG NATURAL & WALIKOTA KOMEDI
     // =========================================================
-
     function createOakTree(x, z, scale = 1) {
       const g = new THREE.Group();
       g.add(createBlock(0.55 * scale, 1.8 * scale, 0.55 * scale, 0x78350f, 0, 0.9 * scale, 0));
@@ -380,11 +337,7 @@
     function createUtilityPole(x, z, rotateCrossbar = false) {
       const pole = new THREE.Group();
       pole.add(createBlock(0.28, 5.2, 0.28, 0x475569, 0, 2.6, 0));
-      if (rotateCrossbar) {
-        pole.add(createBlock(0.2, 0.2, 1.8, 0x334155, 0, 4.9, 0));
-      } else {
-        pole.add(createBlock(1.8, 0.2, 0.2, 0x334155, 0, 4.9, 0));
-      }
+      pole.add(createBlock(rotateCrossbar ? 0.2 : 1.8, 0.2, rotateCrossbar ? 1.8 : 0.2, 0x334155, 0, 4.9, 0));
       const lampBulb = createBlock(0.5, 0.25, 0.5, 0xfef08a, 0, 3.8, 0.35);
       pole.add(lampBulb);
       nightWindows.push(lampBulb.material);
@@ -403,8 +356,7 @@
         points.push(new THREE.Vector3(x, y, z));
       }
       const geo = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x0f172a }));
-      cityGroup.add(line);
+      cityGroup.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x0f172a })));
     }
 
     function buildMunicipalWaterTower(x, z) {
@@ -445,35 +397,36 @@
       cityGroup.add(ps);
     }
 
-    // SIANG: Kawanan Burung Terbang (Tidur Saat Malam)
+    // GERAKAN BURUNG NATURAL (Lissajous 3D Flight + Banking + Gliding vs Flapping)
     function spawnDayBirds() {
       const birdColors = [0xffffff, 0xfef08a, 0x38bdf8, 0xfb7185];
-      for (let i = 0; i < 18; i++) {
+      for (let i = 0; i < 16; i++) {
         const bird = new THREE.Group();
         const col = birdColors[i % birdColors.length];
-        const body = createBlock(0.35, 0.2, 0.55, col, 0, 0, 0, false, false);
-        const beak = createBlock(0.15, 0.12, 0.2, 0xf97316, 0, 0, 0.35, false, false);
-        const leftWing = createBlock(0.45, 0.08, 0.3, col, -0.35, 0.05, 0, false, false);
-        const rightWing = createBlock(0.45, 0.08, 0.3, col, 0.35, 0.05, 0, false, false);
-        bird.add(body, beak, leftWing, rightWing);
+        const body = createBlock(0.32, 0.18, 0.55, col, 0, 0, 0, false, false);
+        const tail = createBlock(0.24, 0.08, 0.25, col, 0, 0.02, -0.35, false, false);
+        const beak = createBlock(0.14, 0.1, 0.2, 0xf97316, 0, 0, 0.35, false, false);
+        const leftWing = createBlock(0.48, 0.06, 0.28, col, -0.36, 0.04, 0, false, false);
+        const rightWing = createBlock(0.48, 0.06, 0.28, col, 0.36, 0.04, 0, false, false);
+        bird.add(body, tail, beak, leftWing, rightWing);
 
         bird.userData = {
           leftWing, rightWing,
-          radius: 10 + (i % 5) * 4.5,
-          height: 9 + (i % 4) * 2.2,
-          speed: 0.008 + (i % 3) * 0.004,
-          angle: (i / 18) * Math.PI * 2,
-          centerX: (i % 2 === 0 ? 1 : -1) * 4,
-          centerZ: (i % 3 === 0 ? -4 : 4)
+          rx: 12 + (i % 4) * 5,
+          rz: 10 + ((i + 2) % 4) * 5,
+          freqX: 0.005 + (i % 3) * 0.002,
+          freqZ: 0.007 + (i % 2) * 0.003,
+          baseY: 9.5 + (i % 5) * 1.8,
+          phase: i * 1.7,
+          centerX: (i % 2 === 0 ? 1 : -1) * 5,
+          centerZ: (i % 3 === 0 ? -5 : 5)
         };
         cityGroup.add(bird);
         birdsList.push(bird);
       }
     }
 
-    // MALAM: Kunang-Kunang Bercahaya (Fireflies) & Burung Hantu (Owls)
     function spawnNightWildlife() {
-      // 75 Kunang-kunang bercahaya di sekitar pohon, taman air mancur, dan halaman rumah
       for (let i = 0; i < 75; i++) {
         const geo = new THREE.BoxGeometry(0.18, 0.18, 0.18);
         const mat = new THREE.MeshBasicMaterial({
@@ -486,16 +439,15 @@
         const bz = (Math.random() - 0.5) * 48;
         const by = 0.8 + Math.random() * 3.5;
         fly.position.set(bx, by, bz);
-        fly.visible = false; // Hanya muncul saat malam
+        fly.visible = false;
         fly.userData = { baseX: bx, baseY: by, baseZ: bz, phase: Math.random() * Math.PI * 2 };
         cityGroup.add(fly);
         firefliesList.push(fly);
       }
 
-      // 2 Burung Hantu Malam (Owls) Bertengger di Pohon Plasa dengan Mata Kuning Menyala
       [[-4.5, -4.5], [4.5, 4.5]].forEach(([ox, oz]) => {
         const owl = new THREE.Group();
-        owl.add(createBlock(0.45, 0.55, 0.4, 0x451a03, 0, 0, 0, false, false)); // Badan Cokelat Tua
+        owl.add(createBlock(0.45, 0.55, 0.4, 0x451a03, 0, 0, 0, false, false));
         const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.08), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
         const eyeR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.08), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
         eyeL.position.set(-0.1, 0.1, 0.22);
@@ -508,17 +460,12 @@
       });
     }
 
-    // PARTIKEL CUACA: Hujan, Salju, Daun Musim Gugur, Kelopak Sakura
     function spawnWeatherParticles() {
       for (let i = 0; i < 240; i++) {
         const geo = new THREE.BoxGeometry(0.22, 0.22, 0.22);
         const mat = new THREE.MeshBasicMaterial({ color: 0xf9a8d4, transparent: true, opacity: 0.9 });
         const drop = new THREE.Mesh(geo, mat);
-        drop.position.set(
-          (Math.random() - 0.5) * 60,
-          Math.random() * 26,
-          (Math.random() - 0.5) * 60
-        );
+        drop.position.set((Math.random() - 0.5) * 60, Math.random() * 26, (Math.random() - 0.5) * 60);
         drop.userData = { phase: Math.random() * 10, speedMod: 0.8 + Math.random() * 0.4 };
         cityGroup.add(drop);
         weatherDrops.push(drop);
@@ -538,7 +485,7 @@
     }
 
     // =========================================================
-    // 3. BANGUN DUNIA & 12 RUMAH SUBSIDI
+    // 3. BANGUN KOTA, MAYOR LUCU, KULIT PISANG, DAN KAVLING RUMAH
     // =========================================================
     const houseColors = [
       0x0284c7, 0xe11d48, 0x059669, 0xd97706,
@@ -651,44 +598,82 @@
       ];
       pineLocations.forEach(([px, pz]) => createPineTree(px, pz));
 
-      // Mayor Bertopi Hitam
+      // MAYOR BERTOPI HITAM (Berjalan Kiri-Kanan + Bisa Kepleset / Bersin)
       mayorGroup = new THREE.Group();
-      mayorGroup.add(createBlock(0.38, 0.7, 0.38, 0x0f172a, -0.22, 0.35, 0));
-      mayorGroup.add(createBlock(0.38, 0.7, 0.38, 0x0f172a, 0.22, 0.35, 0));
+      mayorLeftLeg = createBlock(0.36, 0.7, 0.36, 0x0f172a, -0.22, 0.35, 0);
+      mayorRightLeg = createBlock(0.36, 0.7, 0.36, 0x0f172a, 0.22, 0.35, 0);
+      mayorLeftArm = createBlock(0.32, 0.85, 0.35, 0x1e293b, -0.65, 1.15, 0);
+      mayorRightArm = createBlock(0.32, 0.85, 0.35, 0x1e293b, 0.65, 1.15, 0);
+      mayorGroup.add(mayorLeftLeg, mayorRightLeg, mayorLeftArm, mayorRightArm);
+
       mayorGroup.add(createBlock(0.9, 0.95, 0.5, 0x1e293b, 0, 1.15, 0));
       mayorGroup.add(createBlock(0.28, 0.75, 0.54, 0xffffff, 0, 1.2, 0));
       mayorGroup.add(createBlock(0.14, 0.55, 0.58, 0xef4444, 0, 1.15, 0));
-      mayorGroup.add(createBlock(0.32, 0.85, 0.35, 0x1e293b, -0.65, 1.15, 0));
-      mayorGroup.add(createBlock(0.32, 0.85, 0.35, 0x1e293b, 0.65, 1.35, 0.2));
       mayorGroup.add(createBlock(0.85, 0.85, 0.85, 0xfde68a, 0, 2.05, 0));
-      mayorGroup.add(createBlock(1.35, 0.16, 1.35, 0x090d16, 0, 2.55, 0));
-      mayorGroup.add(createBlock(0.92, 0.2, 0.92, 0xf59e0b, 0, 2.7, 0));
-      mayorGroup.add(createBlock(0.9, 0.85, 0.9, 0x090d16, 0, 3.15, 0));
+      mayorGroup.add(createBlock(0.15, 0.15, 0.08, 0x0f172a, -0.2, 2.1, 0.44));
+      mayorGroup.add(createBlock(0.15, 0.15, 0.08, 0x0f172a, 0.2, 2.1, 0.44));
+
+      mayorHatGroup = new THREE.Group();
+      mayorHatGroup.add(createBlock(1.35, 0.16, 1.35, 0x090d16, 0, 0, 0));
+      mayorHatGroup.add(createBlock(0.92, 0.2, 0.92, 0xf59e0b, 0, 0.15, 0));
+      mayorHatGroup.add(createBlock(0.9, 0.85, 0.9, 0x090d16, 0, 0.6, 0));
+      mayorHatGroup.position.set(0, 2.55, 0);
+      mayorGroup.add(mayorHatGroup);
+
       mayorGroup.position.set(0, 0.15, 4.2);
       cityGroup.add(mayorGroup);
 
-      // 12 Rumah Subsidi
+      // Kulit Pisang 3D di Plasa untuk Adegan Mayor Kepleset
+      bananaPeelMesh = new THREE.Group();
+      bananaPeelMesh.add(createBlock(0.5, 0.12, 0.5, 0xfacc15, 0, 0.06, 0));
+      bananaPeelMesh.add(createBlock(0.2, 0.22, 0.2, 0xeab308, 0, 0.18, 0));
+      bananaPeelMesh.position.set(0, 0.18, 4.2);
+      bananaPeelMesh.visible = false;
+      cityGroup.add(bananaPeelMesh);
+
+      // 12 Kavling Rumah (Mendukung Rumah Subsidi & Upgrade Cyber Villa)
       houseCoords.forEach((pos, idx) => {
         const hGroup = new THREE.Group();
         const roofCol = houseColors[idx];
 
-        hGroup.add(createBlock(5.2, 0.2, 5.2, 0xcbd5e1, 0, 0.1, 0));
+        // Lantai Dasar Kavling
+        hGroup.add(createBlock(5.4, 0.2, 5.4, 0xcbd5e1, 0, 0.1, 0));
         hGroup.add(createBlock(1.2, 0.15, 2.2, 0x94a3b8, 0, 0.08, 3.2));
-        hGroup.add(createBlock(4.0, 2.6, 3.8, 0xffffff, 0, 1.4, 0));
-        hGroup.add(createBlock(1.6, 0.25, 1.0, 0x78350f, 0, 0.22, 2.2));
-        hGroup.add(createBlock(4.6, 0.5, 4.4, roofCol, 0, 2.9, 0));
-        hGroup.add(createBlock(3.8, 0.5, 3.6, roofCol, 0, 3.4, 0));
-        hGroup.add(createBlock(2.8, 0.45, 2.8, roofCol, 0, 3.85, 0));
 
-        hGroup.add(createBlock(0.75, 2.2, 0.75, 0x991b1b, 1.35, 3.6, -0.8));
-        hGroup.add(createBlock(0.9, 0.25, 0.9, 0x7f1d1d, 1.35, 4.65, -0.8));
+        // Sub-group 1: Wujud Rumah Subsidi
+        const subMesh = new THREE.Group();
+        subMesh.add(createBlock(4.0, 2.6, 3.8, 0xffffff, 0, 1.4, 0));
+        subMesh.add(createBlock(1.6, 0.25, 1.0, 0x78350f, 0, 0.22, 2.2));
+        subMesh.add(createBlock(4.6, 0.5, 4.4, roofCol, 0, 2.9, 0));
+        subMesh.add(createBlock(3.8, 0.5, 3.6, roofCol, 0, 3.4, 0));
+        subMesh.add(createBlock(2.8, 0.45, 2.8, roofCol, 0, 3.85, 0));
+        subMesh.add(createBlock(0.75, 2.2, 0.75, 0x991b1b, 1.35, 3.6, -0.8));
+        subMesh.add(createBlock(0.9, 0.25, 0.9, 0x7f1d1d, 1.35, 4.65, -0.8));
+        subMesh.add(createBlock(1.1, 1.8, 1.1, 0x475569, -1.6, 1.0, -1.6));
+        subMesh.add(createBlock(1.0, 1.2, 1.0, 0x0284c7, -1.6, 2.5, -1.6));
+        subMesh.add(createBlock(0.6, 0.2, 0.6, 0x0f172a, -1.6, 3.15, -1.6));
+        subMesh.add(createBlock(1.0, 1.8, 0.15, roofCol, 0, 1.1, 1.92));
+        [-1.25, 1.25].forEach(wx => {
+          const win = createBlock(0.85, 0.85, 0.15, 0xbae6fd, wx, 1.5, 1.92);
+          subMesh.add(win);
+          nightWindows.push(win.material);
+          subMesh.add(createBlock(0.95, 0.25, 0.35, 0x9a3412, wx, 0.95, 2.05));
+          subMesh.add(createBlock(0.75, 0.25, 0.25, 0x16a34a, wx, 1.15, 2.05));
+        });
+        hGroup.add(subMesh);
 
-        // Toren & Bak Air
-        hGroup.add(createBlock(1.1, 1.8, 1.1, 0x475569, -1.6, 1.0, -1.6));
-        hGroup.add(createBlock(1.0, 1.2, 1.0, 0x0284c7, -1.6, 2.5, -1.6));
-        hGroup.add(createBlock(0.6, 0.2, 0.6, 0x0f172a, -1.6, 3.15, -1.6));
-        hGroup.add(createBlock(0.8, 0.6, 0.8, 0x64748b, 2.2, 0.4, 0.8));
-        hGroup.add(createBlock(0.6, 0.55, 0.6, 0x38bdf8, 2.2, 0.48, 0.8));
+        // Sub-group 2: Wujud VIP Cyber Villa 2 Lantai + Kolam Renang (Aktif Jika Beli Produk)
+        const villaMesh = new THREE.Group();
+        villaMesh.add(createBlock(3.4, 2.6, 3.8, 0xf8fafc, -0.7, 1.4, 0));
+        villaMesh.add(createBlock(3.2, 2.2, 3.2, 0x1e293b, -0.7, 3.8, -0.2));
+        villaMesh.add(createBlock(3.8, 0.35, 3.8, 0xf59e0b, -0.7, 5.05, -0.2)); // Atap Emas VIP
+        const glassBalcony = createBlock(2.8, 1.5, 0.2, 0x38bdf8, -0.7, 3.7, 1.45);
+        villaMesh.add(glassBalcony);
+        nightWindows.push(glassBalcony.material);
+        // Kolam Renang Samping Villa
+        villaMesh.add(createBlock(1.6, 0.35, 3.2, 0x0ea5e9, 1.65, 0.22, 0.2));
+        villaMesh.visible = false;
+        hGroup.add(villaMesh);
 
         for (let s = 0; s < 3; s++) {
           const puff = createBlock(0.45, 0.45, 0.45, 0xf1f5f9, pos.x + 1.35, 4.9 + s * 0.8, pos.z - 0.8, false, false);
@@ -699,15 +684,6 @@
           smokeParticles.push(puff);
         }
 
-        hGroup.add(createBlock(1.0, 1.8, 0.15, roofCol, 0, 1.1, 1.92));
-        [-1.25, 1.25].forEach(wx => {
-          const win = createBlock(0.85, 0.85, 0.15, 0xbae6fd, wx, 1.5, 1.92);
-          hGroup.add(win);
-          nightWindows.push(win.material);
-          hGroup.add(createBlock(0.95, 0.25, 0.35, 0x9a3412, wx, 0.95, 2.05));
-          hGroup.add(createBlock(0.75, 0.25, 0.25, 0x16a34a, wx, 1.15, 2.05));
-        });
-
         hGroup.position.set(pos.x, 0, pos.z);
         hGroup.rotation.y = pos.rot;
 
@@ -717,9 +693,13 @@
 
         hGroup.userData = {
           id: idx + 1,
-          name: `Subsidized House #${idx + 1}`,
+          name: `House #${idx + 1}`,
           roofColor: roofCol,
           owner: null,
+          tier: "subsidized",
+          decor: null,
+          subMesh: subMesh,
+          villaMesh: villaMesh,
           avatarMesh: null,
           labelEl: labelEl
         };
@@ -734,17 +714,42 @@
       spawnClouds();
     }
 
-    function spawnCitizenAvatarOnHouse(houseGroup, shirtHex) {
+    // Karakter Minecraft (Steve, Alex, dan Warga Baru)
+    function spawnCitizenAvatarOnHouse(houseGroup, username, fallbackColor) {
       if (houseGroup.userData.avatarMesh) return;
+
+      let shirtCol = fallbackColor;
+      let pantsCol = 0x1e3a8a;
+      let hairCol = 0x451a03;
+      let skinCol = 0xfde68a;
+
+      if (username === "@steve") {
+        shirtCol = 0x06b6d4; // Baju Cyan khas Steve Minecraft
+        pantsCol = 0x1d4ed8; // Celana Biru Steve
+        hairCol = 0x451a03;  // Rambut Cokelat Tua
+        skinCol = 0xd97706;
+      } else if (username === "@alex") {
+        shirtCol = 0x16a34a; // Baju Hijau khas Alex Minecraft
+        pantsCol = 0x78350f; // Celana Cokelat Alex
+        hairCol = 0xea580c;  // Rambut Oranye Alex
+        skinCol = 0xfed7aa;
+      }
+
       const charGroup = new THREE.Group();
-      charGroup.add(createBlock(0.32, 0.6, 0.32, 0x1e3a8a, -0.18, 0.3, 0));
-      charGroup.add(createBlock(0.32, 0.6, 0.32, 0x1e3a8a, 0.18, 0.3, 0));
-      charGroup.add(createBlock(0.75, 0.8, 0.42, shirtHex, 0, 1.0, 0));
-      charGroup.add(createBlock(0.28, 0.75, 0.3, shirtHex, -0.52, 1.0, 0));
-      charGroup.add(createBlock(0.28, 0.75, 0.3, shirtHex, 0.52, 1.15, 0.15));
-      charGroup.add(createBlock(0.75, 0.75, 0.75, 0xfde68a, 0, 1.8, 0));
-      charGroup.add(createBlock(0.8, 0.22, 0.8, 0x451a03, 0, 2.22, 0));
-      charGroup.position.set(1.5, 0.15, 2.7);
+      const legL = createBlock(0.32, 0.6, 0.32, pantsCol, -0.18, 0.3, 0);
+      const legR = createBlock(0.32, 0.6, 0.32, pantsCol, 0.18, 0.3, 0);
+      const body = createBlock(0.75, 0.8, 0.42, shirtCol, 0, 1.0, 0);
+      const armL = createBlock(0.28, 0.75, 0.3, shirtCol, -0.52, 1.0, 0);
+      const armR = createBlock(0.28, 0.75, 0.3, shirtCol, 0.52, 1.0, 0);
+      const head = createBlock(0.75, 0.75, 0.75, skinCol, 0, 1.8, 0);
+      const hair = createBlock(0.8, 0.24, 0.8, hairCol, 0, 2.22, 0);
+      const eyeL = createBlock(0.12, 0.12, 0.06, 0x0f172a, -0.16, 1.82, 0.38);
+      const eyeR = createBlock(0.12, 0.12, 0.06, 0x0f172a, 0.16, 1.82, 0.38);
+
+      charGroup.add(legL, legR, body, armL, armR, head, hair, eyeL, eyeR);
+      charGroup.position.set(1.2, 0.15, 2.8);
+      charGroup.userData = { legL, legR, armL, armR, phase: houseGroup.userData.id * 1.3 };
+
       houseGroup.add(charGroup);
       houseGroup.userData.avatarMesh = charGroup;
       citizenAvatars.push(charGroup);
@@ -753,15 +758,17 @@
     buildWorld();
 
     // =========================================================
-    // 4. SISTEM SIKLUS MUSIM & CUACA (OTOMATIS TIAP 2 HARI / MANUAL)
+    // 4. SINKRONISASI GLOBAL MUSIM & SIANG/MALAM (2 MALAM = 1 MUSIM)
     // =========================================================
     const seasons = [
       {
         id: "sakura",
-        badge: "🌸 SAKURA SEASON",
+        badge: "🌸 SAKURA",
         groundHex: 0x4ade80,
         foliagePalette: [0xf472b6, 0xf9a8d4, 0xfbcfe8],
         skyDayHex: 0x93c5fd,
+        ambientDayHex: 0xfce7f3, // Ambient Pink Hangat Sakura
+        hemiGroundHex: 0xfbcfe8,
         particleHex: 0xf9a8d4,
         particleScale: [0.22, 0.08, 0.22],
         fallSpeed: 0.045,
@@ -770,10 +777,12 @@
       },
       {
         id: "summer",
-        badge: "☀️ CLEAR SUMMER",
+        badge: "☀️ SUMMER",
         groundHex: 0x22c55e,
         foliagePalette: [0x15803d, 0x22c55e, 0x16a34a],
         skyDayHex: 0x7dd3fc,
+        ambientDayHex: 0xfef9c3, // Ambient Emas Cerah Musim Panas
+        hemiGroundHex: 0x86efac,
         particleHex: 0xffffff,
         particleScale: [0.1, 0.1, 0.1],
         fallSpeed: 0,
@@ -782,10 +791,12 @@
       },
       {
         id: "autumn",
-        badge: "🍂 AUTUMN FALL",
+        badge: "🍂 AUTUMN",
         groundHex: 0xca8a04,
         foliagePalette: [0xd97706, 0xea580c, 0xb45309],
-        skyDayHex: 0xfed7aa,
+        skyDayHex: 0xfdba74,
+        ambientDayHex: 0xffedd5, // Ambient Oranye Sore Musim Gugur
+        hemiGroundHex: 0xfde047,
         particleHex: 0xf97316,
         particleScale: [0.25, 0.08, 0.25],
         fallSpeed: 0.055,
@@ -794,10 +805,12 @@
       },
       {
         id: "rain",
-        badge: "🌧️ RAINY STORM",
+        badge: "🌧️ RAINY",
         groundHex: 0x15803d,
         foliagePalette: [0x166534, 0x14532d, 0x065f46],
-        skyDayHex: 0x475569,
+        skyDayHex: 0x64748b,
+        ambientDayHex: 0xcbd5e1, // Ambient Mendung Biru Abu-abu
+        hemiGroundHex: 0x334155,
         particleHex: 0x38bdf8,
         particleScale: [0.06, 0.65, 0.06],
         fallSpeed: 0.48,
@@ -806,10 +819,12 @@
       },
       {
         id: "snow",
-        badge: "❄️ WINTER SNOW",
+        badge: "❄️ SNOW",
         groundHex: 0xf8fafc,
         foliagePalette: [0xe2e8f0, 0xf1f5f9, 0xcbd5e1],
         skyDayHex: 0xcbd5e1,
+        ambientDayHex: 0xe0f2fe, // Ambient Es Biru Dingin
+        hemiGroundHex: 0xffffff,
         particleHex: 0xffffff,
         particleScale: [0.2, 0.2, 0.2],
         fallSpeed: 0.06,
@@ -818,100 +833,134 @@
       }
     ];
 
-    // Otomatis pilih musim berdasarkan hari kalender (berganti tiap 2 hari)
-    const autoSeasonIdx = Math.floor(Date.now() / (1000 * 60 * 60 * 48)) % seasons.length;
-    let currentSeasonIdx = autoSeasonIdx;
+    let lastAppliedSeason = -1;
+    let lastAppliedNight = null;
 
-    function applySeasonEnvironment() {
-      const s = seasons[currentSeasonIdx];
-      document.getElementById("seasonBadge").textContent = s.badge;
-      document.getElementById("seasonBtn").textContent = s.badge.split(" ")[0] + " Weather";
+    function updateGlobalSyncedEnvironment() {
+      const nowMs = Date.now();
+      // 1 Musim = 2 Hari penuh (48 jam = 172.800.000 ms)
+      // Di dalam 2 hari (1 musim), terdapat tepat 2 siklus siang-malam (1 siklus = 24 jam)
+      const SEASON_DURATION_MS = 48 * 60 * 60 * 1000;
+      const DAY_NIGHT_CYCLE_MS = 24 * 60 * 60 * 1000;
 
-      if (groundMesh) {
-        groundMesh.material.color.setHex(isNight ? 0x0f172a : s.groundHex);
+      const syncedSeasonIdx = Math.floor(nowMs / SEASON_DURATION_MS) % seasons.length;
+      const cycleProgress = (nowMs % DAY_NIGHT_CYCLE_MS) / DAY_NIGHT_CYCLE_MS;
+      // Setengah siklus adalah Siang, setengah siklus adalah Malam (2 Malam per 1 Musim)
+      const syncedIsNight = cycleProgress >= 0.5;
+
+      if (syncedSeasonIdx !== lastAppliedSeason || syncedIsNight !== lastAppliedNight) {
+        lastAppliedSeason = syncedSeasonIdx;
+        lastAppliedNight = syncedIsNight;
+        currentSeasonIdx = syncedSeasonIdx;
+        isNight = syncedIsNight;
+
+        const s = seasons[currentSeasonIdx];
+        document.getElementById("seasonBadge").textContent = s.badge;
+        document.getElementById("timeBadge").textContent = isNight ? "🌙 NIGHT (FIREFLIES)" : "☀️ DAY (BIRDS)";
+
+        if (groundMesh) {
+          groundMesh.material.color.setHex(isNight ? 0x0f172a : s.groundHex);
+        }
+
+        treeFoliageMaterials.forEach((mat, i) => {
+          mat.color.setHex(s.foliagePalette[i % s.foliagePalette.length]);
+        });
+
+        const skyHex = isNight ? 0x070b14 : s.skyDayHex;
+        scene.background.setHex(skyHex);
+        scene.fog.color.setHex(skyHex);
+
+        // Ambient Spesifik Musim vs Malam
+        ambientLight.color.setHex(isNight ? 0x1e293b : s.ambientDayHex);
+        ambientLight.intensity = isNight ? 0.32 : 0.72;
+        hemiLight.groundColor.setHex(isNight ? 0x090d16 : s.hemiGroundHex);
+        sunLight.intensity = isNight ? 0.35 : (s.id === "rain" ? 0.65 : 1.25);
+
+        // Burung di siang hari, Kunang-kunang & Burung Hantu di malam hari
+        birdsList.forEach(b => { b.visible = !isNight; });
+        firefliesList.forEach(f => { f.visible = isNight; });
+        owlsList.forEach(o => { o.visible = isNight; });
+
+        nightWindows.forEach(mat => {
+          mat.color.setHex(isNight ? 0xfef08a : 0xbae6fd);
+          mat.emissive = new THREE.Color(isNight ? 0xfacc15 : 0x000000);
+          mat.emissiveIntensity = isNight ? 0.85 : 0;
+        });
+
+        weatherDrops.forEach(drop => {
+          drop.visible = s.showParticles;
+          drop.material.color.setHex(s.particleHex);
+          drop.scale.set(s.particleScale[0], s.particleScale[1], s.particleScale[2]);
+        });
       }
-
-      treeFoliageMaterials.forEach((mat, i) => {
-        mat.color.setHex(s.foliagePalette[i % s.foliagePalette.length]);
-      });
-
-      const skyHex = isNight ? 0x070b14 : s.skyDayHex;
-      scene.background.setHex(skyHex);
-      scene.fog.color.setHex(skyHex);
-
-      weatherDrops.forEach(drop => {
-        drop.visible = s.showParticles;
-        drop.material.color.setHex(s.particleHex);
-        drop.scale.set(s.particleScale[0], s.particleScale[1], s.particleScale[2]);
-      });
     }
 
-    function cycleSeason() {
-      currentSeasonIdx = (currentSeasonIdx + 1) % seasons.length;
-      applySeasonEnvironment();
-      showToast(`Weather changed to: ${seasons[currentSeasonIdx].badge}`);
-    }
+    updateGlobalSyncedEnvironment();
 
     // =========================================================
-    // 5. LOGIKA SIANG VS MALAM (BURUNG DIGANTI KUNANG-KUNANG)
+    // 5. SINKRONISASI WARGA SUPABASE + STEVE & ALEX DEFAULT
     // =========================================================
-    function toggleNightMode() {
-      isNight = !isNight;
-      document.getElementById("nightBtn").textContent = isNight ? "☀️ Day" : "🌙 Night";
-      document.getElementById("wildlifeStatus").textContent = isNight
-        ? "✨ Fireflies & 🦉 Owls Active"
-        : "🐦 Day Birds Active";
+    let claimedData = { ...defaultEpisode1Citizens };
 
-      ambientLight.intensity = isNight ? 0.25 : 0.65;
-      sunLight.intensity = isNight ? 0.35 : 1.25;
-
-      // Burung tidur saat malam, Kunang-kunang & Burung Hantu keluar!
-      birdsList.forEach(b => { b.visible = !isNight; });
-      firefliesList.forEach(f => { f.visible = isNight; });
-      owlsList.forEach(o => { o.visible = isNight; });
-
-      nightWindows.forEach(mat => {
-        mat.color.setHex(isNight ? 0xfef08a : 0xbae6fd);
-        mat.emissive = new THREE.Color(isNight ? 0xfacc15 : 0x000000);
-        mat.emissiveIntensity = isNight ? 0.85 : 0;
-      });
-
-      applySeasonEnvironment();
-    }
-
-    applySeasonEnvironment();
-
-    // =========================================================
-    // 6. SINKRONISASI SUPABASE + CLAIM RUMAH
-    // =========================================================
-    let claimedData = JSON.parse(localStorage.getItem("nexaton_citizens") || "{}");
+    // Gabungkan dari localStorage sebagai cadangan cepat
+    const localSaved = JSON.parse(localStorage.getItem("nexaton_citizens_v2") || "{}");
+    Object.keys(localSaved).forEach(k => { claimedData[k] = localSaved[k]; });
 
     async function loadCitizensData() {
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient.from("citizens").select("*");
           if (!error && data) {
-            data.forEach(row => { claimedData[row.house_id] = row.username; });
-            localStorage.setItem("nexaton_citizens", JSON.stringify(claimedData));
+            data.forEach(row => {
+              claimedData[row.house_id] = {
+                username: row.username,
+                tier: row.tier || "subsidized",
+                decor: row.decor || null
+              };
+            });
+            // Pastikan Steve (#1) & Alex (#2) selalu terdaftar di Supabase untuk semua pengunjung
+            if (!data.find(r => r.house_id === 1)) {
+              await supabaseClient.from("citizens").upsert({ house_id: 1, username: "@steve" });
+            }
+            if (!data.find(r => r.house_id === 2)) {
+              await supabaseClient.from("citizens").upsert({ house_id: 2, username: "@alex" });
+            }
           }
         } catch (err) {
-          console.warn("Supabase local mode:", err);
+          console.warn("Supabase sync note:", err);
         }
       }
       refreshHousesState();
     }
 
+    // Polling ringan setiap 10 detik agar pengunjung yang sedang buka web melihat klaim baru secara live
+    setInterval(loadCitizensData, 10000);
+
     function refreshHousesState() {
       let claimedCount = 0;
       clickableHouses.forEach(h => {
-        const owner = claimedData[h.userData.id] || null;
+        const entry = claimedData[h.userData.id] || null;
+        const owner = entry ? (typeof entry === "string" ? entry : entry.username) : null;
+        const tier = entry && entry.tier ? entry.tier : "subsidized";
+        const decor = entry && entry.decor ? entry.decor : null;
+
         h.userData.owner = owner;
+        h.userData.tier = tier;
+        h.userData.decor = decor;
+
+        // Tampilkan Cyber Villa jika status tier === 'villa'
+        const isVilla = tier.toLowerCase().includes("villa") || tier.toLowerCase().includes("penthouse");
+        h.userData.subMesh.visible = !isVilla;
+        h.userData.villaMesh.visible = isVilla;
+
         const lbl = h.userData.labelEl;
         if (owner) {
           claimedCount++;
-          spawnCitizenAvatarOnHouse(h, h.userData.roofColor);
-          lbl.textContent = `🏠 ${owner}`;
-          lbl.className = "house-label bg-emerald-500 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
+          spawnCitizenAvatarOnHouse(h, owner, h.userData.roofColor);
+          lbl.textContent = isVilla ? `🏰 ${owner} (VIP)` : `🏠 ${owner}`;
+          lbl.className = isVilla
+            ? "house-label bg-amber-400 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md"
+            : "house-label bg-emerald-500 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
         } else {
           lbl.textContent = `Plot #${h.userData.id} (FREE)`;
           lbl.className = "house-label bg-slate-900/80 text-slate-200 border-slate-600 px-2 py-0.5 rounded text-[9px] font-bold";
@@ -965,8 +1014,8 @@
       }
 
       const hid = targetHouse.userData.id;
-      claimedData[hid] = rawUser;
-      localStorage.setItem("nexaton_citizens", JSON.stringify(claimedData));
+      claimedData[hid] = { username: rawUser, tier: "subsidized", decor: null };
+      localStorage.setItem("nexaton_citizens_v2", JSON.stringify(claimedData));
 
       if (supabaseClient) {
         try { await supabaseClient.from("citizens").upsert({ house_id: hid, username: rawUser }); } catch (e) {}
@@ -989,14 +1038,14 @@
       const found = clickableHouses.find(h => h.userData.owner && h.userData.owner.toLowerCase().includes(q));
       if (found) {
         focusOnHouse(found);
-        showToast(`📍 Found ${found.userData.owner} at Subsidized House #${found.userData.id}!`);
+        showToast(`📍 Found ${found.userData.owner} at House #${found.userData.id}!`);
       } else {
-        showToast(`Citizen "${q}" doesn't have a house yet! Click CLAIM HOUSE to move in.`);
+        showToast(`Citizen "${q}" doesn't have a house yet! Click CLAIM FREE HOUSE to move in.`);
       }
     }
 
     // =========================================================
-    // 7. INTERAKSI KLIK RUMAH & 3D ROOM CUTAWAY
+    // 6. INTERAKSI KLIK RUMAH & 3D ROOM CUTAWAY
     // =========================================================
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -1067,21 +1116,24 @@
     }
 
     function open3DInterior(houseData) {
-      document.getElementById("roomTitle").textContent = houseData.name.toUpperCase();
+      document.getElementById("roomTitle").textContent = `${houseData.name.toUpperCase()}`;
       document.getElementById("interiorModal").classList.remove("hidden");
 
       if (!roomRenderer) initRoom3D();
       roomBedBlanket.material.color.setHex(houseData.roofColor);
 
       const actionArea = document.getElementById("roomActionArea");
+      document.getElementById("infoBuilding").textContent = houseData.tier === "villa" ? "VIP Cyber Villa 🏰" : "Subsidized 🏠";
+      document.getElementById("infoDecor").textContent = houseData.decor ? houseData.decor : "Shop Upgrade 🛍️";
+
       if (houseData.owner) {
         roomCitizenMesh.visible = true;
-        document.getElementById("roomOwnerBanner").textContent = `👤 Owner: ${houseData.owner}`;
+        document.getElementById("roomOwnerBanner").textContent = `👤 Citizen: ${houseData.owner}`;
         document.getElementById("infoCitizen").textContent = houseData.owner;
         actionArea.innerHTML = `
           <a href="https://pevcsr-r6.myshopify.com" target="_blank"
              class="mc-btn-gold w-full py-3 rounded-xl text-center text-slate-950 font-black text-xs sm:text-sm block">
-            🛒 UPGRADE ${houseData.owner.toUpperCase()}'S HOUSE IN SHOP
+            🛒 BUY DECOR TO UPGRADE ${houseData.owner.toUpperCase()} TO A VILLA!
           </a>`;
       } else {
         roomCitizenMesh.visible = false;
@@ -1112,39 +1164,62 @@
     }
 
     // =========================================================
-    // 8. LOOP ANIMASI UTAMA (SIANG/MALAM & CUACA)
+    // 7. ANIMASI MAYOR JALAN KIRI-KANAN, POTONGAN CHAT & KOMEDI
     // =========================================================
+    const mayorPhrases = [
+      "\"Welcome to NexatonCity! 🏙️\"",
+      "\"Steve & Alex already moved in! 🧱\"",
+      "\"Follow @mayorofnexatoncity...\"",
+      "\"...to claim your FREE house! 🏠\"",
+      "\"Comment for a Yard & Tree! 🌳\"",
+      "\"Shop decor to unlock a VIP Villa! 🏰\""
+    ];
+
+    const bubbleEl = document.getElementById("mayorBubble");
+    const speechTextEl = document.getElementById("mayorSpeechText");
+
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    const bubbleEl = document.getElementById("mayorBubble");
-
     function animate() {
       requestAnimationFrame(animate);
       tick++;
       controls.update();
 
+      // Cek sinkronisasi waktu global setiap 60 frame
+      if (tick % 60 === 0) updateGlobalSyncedEnvironment();
+
       if (turbineBlades) turbineBlades.rotation.z -= 0.025;
 
-      // A. Jika SIANG: Gerakkan Kawanan Burung
+      // 1. GERAKAN BURUNG NATURAL (Lissajous + Miring/Banking + Gliding vs Flapping)
       if (!isNight) {
         birdsList.forEach((b, idx) => {
           const u = b.userData;
-          u.angle += u.speed;
-          const nx = u.centerX + Math.cos(u.angle) * u.radius;
-          const nz = u.centerZ + Math.sin(u.angle) * u.radius;
-          const ny = u.height + Math.sin(tick * 0.05 + idx) * 0.4;
-          b.lookAt(nx, ny, nz);
+          const t = tick + u.phase * 100;
+          const prevX = b.position.x;
+          const prevY = b.position.y;
+          const prevZ = b.position.z;
+
+          const nx = u.centerX + Math.sin(t * u.freqX) * u.rx + Math.cos(t * u.freqX * 0.5) * 3;
+          const nz = u.centerZ + Math.cos(t * u.freqZ) * u.rz + Math.sin(t * u.freqZ * 0.5) * 3;
+          const ny = u.baseY + Math.sin(t * 0.025 + u.phase) * 1.6;
+
           b.position.set(nx, ny, nz);
-          const flap = Math.sin(tick * 0.35 + idx) * 0.55;
+          b.lookAt(nx + (nx - prevX), ny + (ny - prevY), nz + (nz - prevZ));
+
+          // Miringkan badan burung (banking) saat berbelok
+          b.rotation.z = Math.sin(t * u.freqX) * 0.35;
+
+          // Jika sedang menanjak: kepakkan sayap cepat. Jika meluncur turun: rentangkan sayap (gliding)
+          const climbing = (ny - prevY) > -0.005;
+          const flap = climbing ? Math.sin(tick * 0.42 + idx) * 0.65 : Math.sin(tick * 0.08 + idx) * 0.12;
           u.leftWing.rotation.z = flap;
           u.rightWing.rotation.z = -flap;
         });
       } else {
-        // B. Jika MALAM: Gerakkan Kunang-Kunang Bercahaya & Burung Hantu
         firefliesList.forEach((f, idx) => {
           const u = f.userData;
           f.position.x = u.baseX + Math.sin(tick * 0.03 + u.phase) * 1.2;
@@ -1157,10 +1232,10 @@
         });
       }
 
-      // C. Animasi Partikel Musim & Cuaca (Sakura / Musim Gugur / Hujan / Salju)
+      // 2. Animasi Partikel Musim
       const activeSeason = seasons[currentSeasonIdx];
       if (activeSeason.showParticles) {
-        weatherDrops.forEach((drop, idx) => {
+        weatherDrops.forEach(drop => {
           drop.position.y -= activeSeason.fallSpeed * drop.userData.speedMod;
           drop.position.x += Math.sin(tick * 0.03 + drop.userData.phase) * activeSeason.drift;
           if (activeSeason.id !== "rain") {
@@ -1197,26 +1272,65 @@
         d.position.y = 3.2 - (t * t * 2.6);
       });
 
-      citizenAvatars.forEach((av, idx) => {
-        av.position.y = 0.15 + Math.abs(Math.sin(tick * 0.09 + idx)) * 0.18;
+      // 3. Animasi Steve, Alex, dan Warga Berjalan di Halaman Rumah
+      citizenAvatars.forEach((av) => {
+        const p = av.userData.phase;
+        const walkOffset = Math.sin(tick * 0.03 + p) * 1.1;
+        av.position.x = walkOffset;
+        av.position.y = 0.15 + Math.abs(Math.sin(tick * 0.12 + p)) * 0.12;
+        av.rotation.y = Math.cos(tick * 0.03 + p) > 0 ? Math.PI / 2 : -Math.PI / 2;
+
+        const swing = Math.sin(tick * 0.15 + p) * 0.5;
+        av.userData.legL.rotation.x = swing;
+        av.userData.legR.rotation.x = -swing;
+        av.userData.armL.rotation.x = -swing;
+        av.userData.armR.rotation.x = swing;
       });
 
-      clickableHouses.forEach(h => {
-        const pos = new THREE.Vector3(h.position.x, 4.8, h.position.z);
-        pos.project(camera);
-        if (pos.z < 1) {
-          h.userData.labelEl.style.left = `${(pos.x * 0.5 + 0.5) * window.innerWidth}px`;
-          h.userData.labelEl.style.top = `${(-(pos.y * 0.5) + 0.5) * window.innerHeight}px`;
-          h.userData.labelEl.style.opacity = "1";
-        } else {
-          h.userData.labelEl.style.opacity = "0";
-        }
-      });
-
+      // 4. MAYOR BERJALAN KIRI-KANAN + BUBBLE CHAT TERPOTONG + ADEGAN LUCU TERJADWAL
       if (mayorGroup) {
-        mayorGroup.position.y = 0.15 + Math.abs(Math.sin(tick * 0.07)) * 0.15;
-        mayorGroup.rotation.y = Math.sin(tick * 0.02) * 0.35;
-        const headPos = new THREE.Vector3(0, 4.1, 4.2);
+        const nowSec = (Date.now() / 1000);
+        // Siklus komedi setiap 45 detik (tersinkronisasi di semua perangkat pengunjung!)
+        const gagCycle = nowSec % 45;
+
+        if (gagCycle < 3.5) {
+          // KOMEDI 1: Mayor Terpeleset Kulit Pisang!
+          bananaPeelMesh.visible = true;
+          bananaPeelMesh.position.x = mayorGroup.position.x;
+          mayorGroup.rotation.x = -Math.PI / 2.2; // Jatuh telentang
+          mayorGroup.position.y = 0.55;
+          mayorHatGroup.position.y = 3.1 + Math.abs(Math.sin(tick * 0.25)) * 0.6;
+          speechTextEl.textContent = "\"WHOA!! MY BACK!! 🍌💥\"";
+        } else if (gagCycle >= 20 && gagCycle < 23) {
+          // KOMEDI 2: Mayor Bersin Keras (ACHOO!) & Topi Melayang!
+          bananaPeelMesh.visible = false;
+          mayorGroup.rotation.x = 0.35;
+          mayorGroup.position.y = 0.15 + Math.abs(Math.sin(tick * 0.3)) * 0.75;
+          mayorHatGroup.position.y = 3.4;
+          speechTextEl.textContent = "\"ACHOO!! 🤧 Excuse me!\"";
+        } else {
+          // NORMAL: Mayor Berjalan Kiri-Kanan Sambil Mengganti Potongan Chat Tiap 4 Detik
+          bananaPeelMesh.visible = false;
+          mayorGroup.rotation.x = 0;
+          mayorHatGroup.position.y = 2.55;
+
+          const walkWave = Math.sin(nowSec * 0.65);
+          const walkDir = Math.cos(nowSec * 0.65);
+          mayorGroup.position.x = walkWave * 3.6;
+          mayorGroup.position.y = 0.15 + Math.abs(Math.sin(nowSec * 6)) * 0.14;
+          mayorGroup.rotation.y = walkDir >= 0 ? Math.PI / 2.5 : -Math.PI / 2.5;
+
+          const limbSwing = Math.sin(nowSec * 7) * 0.55;
+          mayorLeftLeg.rotation.x = limbSwing;
+          mayorRightLeg.rotation.x = -limbSwing;
+          mayorLeftArm.rotation.x = -limbSwing;
+          mayorRightArm.rotation.x = limbSwing;
+
+          const phraseIdx = Math.floor(nowSec / 4) % mayorPhrases.length;
+          speechTextEl.textContent = mayorPhrases[phraseIdx];
+        }
+
+        const headPos = new THREE.Vector3(mayorGroup.position.x, 4.2, mayorGroup.position.z);
         headPos.project(camera);
         if (headPos.z < 1) {
           bubbleEl.style.left = `${(headPos.x * 0.5 + 0.5) * window.innerWidth}px`;
@@ -1226,6 +1340,19 @@
           bubbleEl.style.opacity = "0";
         }
       }
+
+      // 5. Update Posisi Label Rumah di Layar
+      clickableHouses.forEach(h => {
+        const pos = new THREE.Vector3(h.position.x, 5.2, h.position.z);
+        pos.project(camera);
+        if (pos.z < 1) {
+          h.userData.labelEl.style.left = `${(pos.x * 0.5 + 0.5) * window.innerWidth}px`;
+          h.userData.labelEl.style.top = `${(-(pos.y * 0.5) + 0.5) * window.innerHeight}px`;
+          h.userData.labelEl.style.opacity = "1";
+        } else {
+          h.userData.labelEl.style.opacity = "0";
+        }
+      });
 
       renderer.render(scene, camera);
     }
