@@ -6,6 +6,7 @@
   <title>NexatonCity - 3D Voxel World</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@600;800&display=swap" rel="stylesheet">
   <style>
     * { user-select: none; -webkit-user-select: none; }
@@ -30,89 +31,118 @@
       box-shadow: inset -2px -2px 0px #78350f, inset 2px 2px 0px #fde68a;
     }
     #webgl-container { width: 100%; height: 100%; display: block; }
+    
+    /* Floating Speech Bubble Mayor */
+    #mayorBubble {
+      position: fixed;
+      z-index: 15;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      transition: opacity 0.15s;
+    }
   </style>
 </head>
 <body class="relative">
 
-  <!-- 3D RENDER CONTAINER -->
+  <!-- MAIN 3D WORLD CONTAINER -->
   <div id="webgl-container"></div>
+
+  <!-- FLOATING MAYOR SPEECH BUBBLE (FOLLOWS 3D MAYOR HEAD) -->
+  <div id="mayorBubble" class="bg-white border-3 border-slate-900 px-3.5 py-2 rounded-2xl shadow-xl text-center max-w-[230px]" style="border: 3px solid #0f172a;">
+    <div class="text-[10px] font-extrabold uppercase text-amber-600 tracking-wider">🎩 Mayor of Nexaton</div>
+    <div class="text-xs font-extrabold text-slate-900 leading-snug mt-0.5">
+      "Come move to NexatonCity! Follow to claim a FREE house!"
+    </div>
+    <div class="w-3 h-3 bg-white border-r-3 border-b-3 border-slate-900 rotate-45 mx-auto -mb-3.5 mt-1" style="border-right:3px solid #0f172a; border-bottom:3px solid #0f172a;"></div>
+  </div>
 
   <!-- TOP GAME HUD -->
   <div class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
     <div class="mc-panel px-3.5 py-2.5 rounded-xl text-white flex items-center gap-3 pointer-events-auto">
-      <div class="text-2xl">🏛️</div>
+      <div class="text-2xl">🎩</div>
       <div>
         <div class="flex items-center gap-2">
           <h1 class="pixel-font text-xs sm:text-sm text-sky-400">NEXATON CITY</h1>
-          <span class="bg-amber-500/20 border border-amber-400 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded">3D VOXEL</span>
+          <span class="bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[10px] font-bold px-1.5 py-0.5 rounded">DAY 1</span>
         </div>
         <p class="text-xs text-slate-300 mt-1">
-          🏠 Empty Subsidized Houses: <span id="hudEmpty" class="text-white font-bold">12</span>
+          👥 Citizens: <span class="text-emerald-400 font-bold">0</span> | 🏠 Empty Houses: <span class="text-white font-bold">12</span>
         </p>
       </div>
     </div>
 
-    <!-- Controls: Day/Night & Shop -->
     <div class="flex items-center gap-2 pointer-events-auto">
-      <button onclick="toggleNightMode()" id="nightBtn" class="mc-panel px-3 py-2.5 rounded-xl text-white text-xs font-bold hover:border-sky-400 transition">
-        🌙 Night Mode
+      <button onclick="toggleCameraMode()" id="camModeBtn" class="mc-panel px-3 py-2.5 rounded-xl text-sky-300 text-xs font-bold border-sky-400">
+        ✋ Mode: Geser (Pan)
+      </button>
+      <button onclick="toggleNightMode()" id="nightBtn" class="mc-panel px-3 py-2.5 rounded-xl text-white text-xs font-bold">
+        🌙 Night
       </button>
       <a href="https://pevcsr-r6.myshopify.com" target="_blank" class="mc-btn-gold text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
-        <span>🛒</span> <span class="hidden sm:inline">CITY SUPPLY SHOP</span>
+        <span>🛒</span> <span class="hidden sm:inline">UPGRADE SHOP</span>
       </a>
     </div>
   </div>
 
-  <!-- BOTTOM RULES BAR -->
+  <!-- BOTTOM HUD & CAMERA D-PAD -->
   <div class="fixed bottom-3 left-3 right-3 z-20 flex flex-wrap items-end justify-between gap-2 pointer-events-none">
-    <div class="mc-panel p-3 rounded-xl text-white pointer-events-auto max-w-lg">
-      <div class="pixel-font text-[9px] text-amber-400 mb-1.5">📢 MAYOR'S NOTE (CLICK ANY 3D HOUSE TO ENTER)</div>
+    <div class="mc-panel p-3 rounded-xl text-white pointer-events-auto max-w-md">
+      <div class="pixel-font text-[9px] text-amber-400 mb-1">📢 TAP ANY HOUSE TO SEE 3D INTERIOR</div>
       <p class="text-[11px] text-slate-300 leading-relaxed">
-        Rotate & zoom the 3D map freely! Follow <strong class="text-sky-400">@NexatonCity</strong> on TikTok to claim a free house, or buy room decor to get an instant <strong class="text-amber-400">VIP Villa Upgrade</strong>.
+        Drag screen to move left/right or rotate! Follow <strong class="text-sky-400">@NexatonCity</strong> for a free house with a smoking chimney, or shop to unlock a VIP Villa.
       </p>
     </div>
 
-    <!-- Camera Reset -->
-    <div class="flex flex-col gap-1.5 pointer-events-auto">
-      <button onclick="resetCamera()" class="mc-panel w-10 h-10 rounded-xl text-white text-xs font-bold flex items-center justify-center" title="Reset View">🎯</button>
+    <!-- Navigation Buttons (Left/Right/Up/Down/Reset) -->
+    <div class="flex items-center gap-1.5 pointer-events-auto">
+      <button onclick="panCamera(-5, 0)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">◀</button>
+      <div class="flex flex-col gap-1.5">
+        <button onclick="panCamera(0, -5)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▲</button>
+        <button onclick="panCamera(0, 5)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▼</button>
+      </div>
+      <button onclick="panCamera(5, 0)" class="mc-panel w-10 h-10 rounded-xl text-white font-bold text-sm">▶</button>
+      <button onclick="resetCamera()" class="mc-panel w-10 h-10 rounded-xl text-amber-300 font-bold text-sm ml-1" title="Center on Mayor">🎯</button>
     </div>
   </div>
 
-  <!-- MODAL: DETAILED 3D INTERIOR ROOM -->
-  <div id="interiorModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+  <!-- MODAL: REAL 3D CUTAWAY ROOM INTERIOR -->
+  <div id="interiorModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3">
     <div class="mc-panel rounded-2xl max-w-md w-full overflow-hidden text-white shadow-2xl">
       <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">3D ROOM INSPECTION</span>
-          <h2 id="roomTitle" class="pixel-font text-xs sm:text-sm text-white mt-1.5">Subsidized House #1</h2>
+          <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">3D VOXEL CUTAWAY ROOM</span>
+          <h2 id="roomTitle" class="pixel-font text-xs sm:text-sm text-white mt-1.5">SUBSIDIZED HOUSE #1</h2>
         </div>
         <button onclick="closeInterior()" class="bg-rose-600 hover:bg-rose-500 text-white font-black w-8 h-8 rounded-lg border-2 border-rose-400">✕</button>
       </div>
 
-      <!-- Detail Interior List -->
-      <div class="p-5 space-y-4">
-        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 space-y-3">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">🛏️ Starter Bed:</span>
-            <span class="font-bold text-sky-400">Installed (Minecraft Style)</span>
+      <!-- 3D Interior Canvas Container -->
+      <div class="relative bg-slate-950 h-[260px] w-full">
+        <div id="room3dContainer" class="w-full h-full"></div>
+        <div class="absolute top-2 left-2 bg-slate-900/85 border border-slate-700 px-2.5 py-1 rounded text-[11px] text-sky-300 font-semibold">
+          🛏️ Minecraft Bed + Bookshelf + Rug + Desk
+        </div>
+      </div>
+
+      <div class="p-4 space-y-3">
+        <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
+            <div class="text-slate-400 text-[10px]">STATUS</div>
+            <div class="font-bold text-emerald-400 mt-0.5">Free / Empty</div>
           </div>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">🪴 Outdoor Yard & Fence:</span>
-            <span class="font-bold text-slate-500">Locked (Comment on TikTok)</span>
+          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
+            <div class="text-slate-400 text-[10px]">YARD & TREE</div>
+            <div class="font-bold text-slate-400 mt-0.5">Comment 💬</div>
           </div>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">✨ Real Room Decor / Shop Item:</span>
-            <span class="font-bold text-amber-400">Empty Desk (Shop to Unlock)</span>
+          <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
+            <div class="text-slate-400 text-[10px]">DESK ITEM</div>
+            <div class="font-bold text-amber-400 mt-0.5">Shop Upgrade 🛍️</div>
           </div>
         </div>
 
-        <p class="text-xs text-slate-300 leading-relaxed text-center">
-          Type your TikTok username in the cart note when buying items on Shopify to automatically claim & upgrade this room!
-        </p>
-
         <a href="https://pevcsr-r6.myshopify.com" target="_blank"
-           class="mc-btn-gold w-full py-3.5 rounded-xl text-center text-slate-950 font-black text-xs sm:text-sm block">
-          🎁 BUY REAL DECOR & UPGRADE THIS ROOM
+           class="mc-btn-gold w-full py-3 rounded-xl text-center text-slate-950 font-black text-xs sm:text-sm block">
+          🛒 CLAIM & UPGRADE THIS ROOM IN SHOP
         </a>
       </div>
     </div>
@@ -120,215 +150,462 @@
 
   <script>
     // =========================================================
-    // THREE.JS 3D VOXEL WORLD ENGINE
+    // 1. SETUP ENGINE 3D UTAMA + ORBIT CONTROLS (BISA DIGESER)
     // =========================================================
-    let scene, camera, renderer;
-    let cityGroup, raycaster, mouse;
-    let houses = [];
-    let isNight = false;
-    let dirLight, ambientLight;
+    const container = document.getElementById("webgl-container");
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x7dd3fc);
+    scene.fog = new THREE.FogExp2(0x7dd3fc, 0.008);
 
-    const houseColors = [
-      0x38bdf8, 0xfb7185, 0x34d399, 0xfbbf24, 
-      0xa78bfa, 0xf472b6, 0x2dd4bf, 0x818cf8, 
-      0xf87171, 0x22d3ee, 0xa3e635, 0xc084fc
-    ];
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 26, 34);
 
-    function init3D() {
-      const container = document.getElementById("webgl-container");
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
 
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x38bdf8);
-      scene.fog = new THREE.FogExp2(0x38bdf8, 0.015);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.maxPolarAngle = Math.PI / 2.15;
+    controls.minDistance = 10;
+    controls.maxDistance = 75;
+    controls.target.set(0, 0, 2);
 
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(30, 25, 30);
-      camera.lookAt(0, 0, 0);
+    // Default: 1 jari langsung menggeser layar kanan-kiri (PAN) agar mudah di HP
+    let isPanMode = true;
+    function applyControlMode() {
+      if (isPanMode) {
+        controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+        controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
+        document.getElementById("camModeBtn").textContent = "✋ Mode: Geser (Pan)";
+      } else {
+        controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+        controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+        document.getElementById("camModeBtn").textContent = "🔄 Mode: Putar (Rotate)";
+      }
+    }
+    applyControlMode();
 
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      container.appendChild(renderer.domElement);
-
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-
-      // Lighting & Shadows
-      ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-      scene.add(ambientLight);
-
-      dirLight = new THREE.DirectionalLight(0xfffbeb, 1.2);
-      dirLight.position.set(20, 40, 20);
-      dirLight.castShadow = true;
-      dirLight.shadow.mapSize.width = 2048;
-      dirLight.shadow.mapSize.height = 2048;
-      dirLight.shadow.camera.near = 0.5;
-      dirLight.shadow.camera.far = 100;
-      const d = 25;
-      dirLight.shadow.camera.left = -d;
-      dirLight.shadow.camera.right = d;
-      dirLight.shadow.camera.top = d;
-      dirLight.shadow.camera.bottom = -d;
-      scene.add(dirLight);
-
-      cityGroup = new THREE.Group();
-      scene.add(cityGroup);
-
-      buildCityMap();
-
-      window.addEventListener("resize", onWindowResize);
-      window.addEventListener("click", onPointerClick);
-
-      animate();
+    function toggleCameraMode() {
+      isPanMode = !isPanMode;
+      applyControlMode();
     }
 
-    // Membuat Blok Voxel Kotak ala Minecraft
-    function createVoxel(w, h, d, color, x, y, z, castShadow = true, receiveShadow = true) {
-      const geometry = new THREE.BoxGeometry(w, h, d);
-      const material = new THREE.MeshStandardMaterial({ 
-        color: color, 
-        roughness: 0.8, 
-        metalness: 0.1 
-      });
-      const mesh = new THREE.Mesh(geometry, material);
+    function panCamera(dx, dz) {
+      camera.position.x += dx;
+      camera.position.z += dz;
+      controls.target.x += dx;
+      controls.target.z += dz;
+    }
+
+    function resetCamera() {
+      camera.position.set(0, 26, 34);
+      controls.target.set(0, 0, 2);
+    }
+
+    // Pencahayaan & Bayangan (Shadows)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.25);
+    sunLight.position.set(28, 45, 25);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    const d = 35;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    scene.add(sunLight);
+
+    const cityGroup = new THREE.Group();
+    scene.add(cityGroup);
+
+    const smokeParticles = [];
+    const fountainDrops = [];
+    const nightWindows = [];
+    const clickableHouses = [];
+    let mayorGroup = null;
+    let tick = 0;
+    let isNight = false;
+
+    function createBlock(w, h, d, hexColor, x, y, z, cast = true, receive = true) {
+      const geo = new THREE.BoxGeometry(w, h, d);
+      const mat = new THREE.MeshStandardMaterial({ color: hexColor, roughness: 0.8, metalness: 0.08 });
+      const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, z);
-      mesh.castShadow = castShadow;
-      mesh.receiveShadow = receiveShadow;
+      mesh.castShadow = cast;
+      mesh.receiveShadow = receive;
       return mesh;
     }
 
-    // Membangun Peta 3D (Tanah, Jalan, Balai Desa, Air Mancur & 12 Rumah)
-    function buildCityMap() {
-      // 1. Base Ground (Tanah Rumput)
-      const ground = createVoxel(36, 0.6, 36, 0x22c55e, 0, -0.3, 0, false, true);
-      cityGroup.add(ground);
+    // =========================================================
+    // 2. BANGUN JALAN DETAIL, BALAI DESA, AIR MANCUR & MAYOR
+    // =========================================================
+    function buildWorld() {
+      // Lahan Rumput Luas (60x60)
+      cityGroup.add(createBlock(64, 1, 64, 0x22c55e, 0, -0.5, 0, false, true));
 
-      // 2. Jalan Raya Aspal
-      const road1 = createVoxel(36, 0.65, 4, 0x334155, 0, -0.27, 0, false, true);
-      const road2 = createVoxel(4, 0.65, 36, 0x334155, 0, -0.27, 0, false, true);
-      cityGroup.add(road1);
-      cityGroup.add(road2);
+      // Plasa Tengah (Tempat Air Mancur & Mayor): x dari -6 ke 6, z dari -6 ke 6
+      cityGroup.add(createBlock(12, 0.15, 12, 0xcbd5e1, 0, 0.075, 0, false, true));
+      cityGroup.add(createBlock(11, 0.18, 11, 0xe2e8f0, 0, 0.09, 0, false, true));
 
-      // 3. Balai Desa (Town Hall) di Pusat Kota
-      const townHall = new THREE.Group();
-      townHall.add(createVoxel(6, 3, 5, 0xffffff, 0, 1.5, 0));
-      townHall.add(createVoxel(6.4, 0.8, 5.4, 0xdc2626, 0, 3.4, 0)); // Atap
-      townHall.add(createVoxel(2, 2, 2, 0xf59e0b, 0, 4.5, 0)); // Menara jam
-      townHall.position.set(0, 0.3, -8);
-      cityGroup.add(townHall);
+      // Jalan Raya Utama Horizontal (z = 0, lebar 4) & Trotoar
+      cityGroup.add(createBlock(64, 0.12, 5.2, 0x94a3b8, 0, 0.06, 0, false, true)); // Trotoar
+      cityGroup.add(createBlock(64, 0.14, 4.0, 0x334155, 0, 0.07, 0, false, true)); // Aspal
 
-      // 4. Fountain Park (Taman Air Mancur)
+      // Jalan Raya Utama Vertikal (x = 0, lebar 4) & Trotoar
+      cityGroup.add(createBlock(5.2, 0.12, 64, 0x94a3b8, 0, 0.06, 0, false, true)); // Trotoar
+      cityGroup.add(createBlock(4.0, 0.14, 64, 0x334155, 0, 0.07, 0, false, true)); // Aspal
+
+      // Marka Jalan Putus-Putus (Putih/Kuning)
+      for (let i = -28; i <= 28; i += 4) {
+        if (Math.abs(i) > 7) {
+          cityGroup.add(createBlock(1.8, 0.16, 0.25, 0xfacc15, i, 0.08, 0, false, true));
+          cityGroup.add(createBlock(0.25, 0.16, 1.8, 0xfacc15, 0, 0.08, i, false, true));
+        }
+      }
+
+      // Lampu Jalan di Sudut Plasa
+      [[-6.2, -6.2], [6.2, -6.2], [-6.2, 6.2], [6.2, 6.2]].forEach(([lx, lz]) => {
+        cityGroup.add(createBlock(0.25, 3.2, 0.25, 0x1e293b, lx, 1.6, lz));
+        const bulb = createBlock(0.6, 0.4, 0.6, 0xfef08a, lx, 3.3, lz);
+        cityGroup.add(bulb);
+        nightWindows.push(bulb.material);
+      });
+
+      // --- TAMAN AIR MANCUR (FOUNTAIN) DI TENGAH PLASA (0, 0, 0) ---
       const fountain = new THREE.Group();
-      fountain.add(createVoxel(5, 0.4, 5, 0x94a3b8, 0, 0.2, 0));
-      fountain.add(createVoxel(4, 0.6, 4, 0x38bdf8, 0, 0.4, 0));
-      fountain.add(createVoxel(1, 1.5, 1, 0xf1f5f9, 0, 1.0, 0));
-      fountain.position.set(0, 0.3, 8);
+      fountain.add(createBlock(5.2, 0.5, 5.2, 0x64748b, 0, 0.25, 0));
+      fountain.add(createBlock(4.4, 0.55, 4.4, 0x0ea5e9, 0, 0.3, 0)); // Kolam Air Biru
+      fountain.add(createBlock(1.6, 1.6, 1.6, 0xf1f5f9, 0, 0.8, 0));  // Pilar Bawah
+      fountain.add(createBlock(2.4, 0.3, 2.4, 0xe2e8f0, 0, 1.7, 0));  // Mangkuk Tengah
+      fountain.add(createBlock(0.8, 1.4, 0.8, 0xf8fafc, 0, 2.4, 0));  // Puncak Air Mancur
+      fountain.add(createBlock(1.0, 0.5, 1.0, 0x38bdf8, 0, 3.3, 0));  // Semburan Atas
       cityGroup.add(fountain);
 
-      // 5. 12 Rumah Subsidi Kosong (Posisi Teratur di 4 Kuadran Kota)
-      const positions = [
-        [-12, -14], [-6, -14], [6, -14], [12, -14],
-        [-12, -3],  [-6, -3],  [6, -3],  [12, -3],
-        [-12, 11],  [-6, 11],  [6, 11],  [12, 11]
+      // Partikel Air Mancur Jatuh (Animasi Voxel)
+      for (let i = 0; i < 16; i++) {
+        const drop = createBlock(0.28, 0.28, 0.28, 0x7dd3fc, 0, 2, 0, false, false);
+        const angle = (i / 16) * Math.PI * 2;
+        drop.userData = { angle: angle, speed: 0.04 + (i % 3) * 0.01, phase: i * 0.4 };
+        cityGroup.add(drop);
+        fountainDrops.push(drop);
+      }
+
+      // 4 Pohon Oak Minecraft di Sudut Plasa Air Mancur
+      [[-4.5, -4.5], [4.5, -4.5], [-4.5, 4.5], [4.5, 4.5]].forEach(([tx, tz]) => {
+        cityGroup.add(createBlock(0.6, 1.8, 0.6, 0x78350f, tx, 0.9, tz));
+        cityGroup.add(createBlock(2.2, 1.4, 2.2, 0x16a34a, tx, 2.3, tz));
+        cityGroup.add(createBlock(1.4, 1.0, 1.4, 0x22c55e, tx, 3.2, tz));
+      });
+
+      // --- BALAI DESA (TOWN HALL) DI UTARA PLASA (x: 0, z: -13) ---
+      const th = new THREE.Group();
+      th.add(createBlock(9, 0.5, 6, 0x94a3b8, 0, 0.25, 0)); // Pondasi
+      th.add(createBlock(8, 3.8, 5, 0xf8fafc, 0, 2.4, 0));  // Gedung Utama
+      // 4 Pilar Putih Klasik di Depan Balai Desa
+      [-3, -1.2, 1.2, 3].forEach(px => {
+        th.add(createBlock(0.5, 3.8, 0.5, 0xe2e8f0, px, 2.4, 2.6));
+      });
+      // Atap Merah Bertingkat & Menara Jam
+      th.add(createBlock(9.2, 0.8, 6.2, 0xdc2626, 0, 4.6, 0));
+      th.add(createBlock(7.6, 0.8, 4.8, 0xef4444, 0, 5.4, 0));
+      th.add(createBlock(2.4, 2.8, 2.4, 0xffffff, 0, 6.8, 0));
+      th.add(createBlock(2.8, 0.8, 2.8, 0x1e293b, 0, 8.5, 0)); // Atap Jam Hitam
+      const clockFace = createBlock(1.1, 1.1, 0.1, 0xfacc15, 0, 7.0, 1.25);
+      th.add(clockFace);
+      nightWindows.push(clockFace.material);
+      th.position.set(0, 0, -13);
+      cityGroup.add(th);
+
+      // --- MAYOR DENGAN TOPI TINGGI HITAM (BLACK TOP HAT) DI DEPAN AIR MANCUR ---
+      mayorGroup = new THREE.Group();
+      // Kaki Hitam
+      mayorGroup.add(createBlock(0.38, 0.7, 0.38, 0x0f172a, -0.22, 0.35, 0));
+      mayorGroup.add(createBlock(0.38, 0.7, 0.38, 0x0f172a, 0.22, 0.35, 0));
+      // Jas Tuxedo Hitam & Dasi Merah
+      mayorGroup.add(createBlock(0.9, 0.95, 0.5, 0x1e293b, 0, 1.15, 0));
+      mayorGroup.add(createBlock(0.28, 0.75, 0.54, 0xffffff, 0, 1.2, 0)); // Kemeja Putih
+      mayorGroup.add(createBlock(0.14, 0.55, 0.58, 0xef4444, 0, 1.15, 0)); // Dasi Merah
+      // Tangan Kiri & Kanan
+      mayorGroup.add(createBlock(0.32, 0.85, 0.35, 0x1e293b, -0.65, 1.15, 0));
+      mayorGroup.add(createBlock(0.32, 0.85, 0.35, 0x1e293b, 0.65, 1.35, 0.2)); // Tangan Melambai
+      // Kepala Kotak Minecraft + Mata
+      mayorGroup.add(createBlock(0.85, 0.85, 0.85, 0xfde68a, 0, 2.05, 0));
+      mayorGroup.add(createBlock(0.15, 0.15, 0.08, 0x0f172a, -0.2, 2.1, 0.44));
+      mayorGroup.add(createBlock(0.15, 0.15, 0.08, 0x0f172a, 0.2, 2.1, 0.44));
+      // TOPI TINGGI HITAM (BLACK TOP HAT) + Pita Emas
+      mayorGroup.add(createBlock(1.35, 0.16, 1.35, 0x090d16, 0, 2.55, 0)); // Pinggiran Topi Hitam Lebar
+      mayorGroup.add(createBlock(0.92, 0.2, 0.92, 0xf59e0b, 0, 2.7, 0));   // Pita Topi Emas
+      mayorGroup.add(createBlock(0.9, 0.85, 0.9, 0x090d16, 0, 3.15, 0));   // Silinder Topi Tinggi Hitam
+
+      mayorGroup.position.set(0, 0.15, 4.2);
+      cityGroup.add(mayorGroup);
+
+      // --- 12 RUMAH SUBSIDI KOSONG (RAPI DI KAVLING, TIDAK OFF-SIDE KE JALAN!) ---
+      const houseColors = [
+        0x0284c7, 0xe11d48, 0x059669, 0xd97706,
+        0x7c3aed, 0xdb2777, 0x0d9488, 0x4f46e5,
+        0xdc2626, 0x0891b2, 0x65a30d, 0x9333ea
       ];
 
-      positions.forEach((pos, idx) => {
-        const houseGroup = new THREE.Group();
-        const roofColor = houseColors[idx];
+      // Koordinat aman jauh dari jalan raya (Jalan ada di x=0 dan z=0)
+      const houseCoords = [
+        // Kuadran Kiri-Atas (Barat Laut)
+        { x: -11, z: -8, rot: 0 },
+        { x: -19, z: -8, rot: 0 },
+        { x: -11, z: -17, rot: 0 },
+        // Kuadran Kanan-Atas (Timur Laut)
+        { x: 11, z: -8, rot: 0 },
+        { x: 19, z: -8, rot: 0 },
+        { x: 11, z: -17, rot: 0 },
+        // Kuadran Kiri-Bawah (Barat Daya)
+        { x: -11, z: 8, rot: Math.PI },
+        { x: -19, z: 8, rot: Math.PI },
+        { x: -11, z: 17, rot: Math.PI },
+        // Kuadran Kanan-Bawah (Timur Laut)
+        { x: 11, z: 8, rot: Math.PI },
+        { x: 19, z: 8, rot: Math.PI },
+        { x: 11, z: 17, rot: Math.PI }
+      ];
 
-        // Pondasi & Dinding
-        const base = createVoxel(3.2, 0.2, 3.2, 0x94a3b8, 0, 0.1, 0);
-        const walls = createVoxel(2.6, 1.8, 2.6, 0xffffff, 0, 1.0, 0);
-        // Atap Unik
-        const roof = createVoxel(3.0, 0.8, 3.0, roofColor, 0, 2.3, 0);
-        // Pintu
-        const door = createVoxel(0.8, 1.2, 0.1, roofColor, 0, 0.7, 1.35);
+      houseCoords.forEach((pos, idx) => {
+        const hGroup = new THREE.Group();
+        const roofCol = houseColors[idx];
 
-        houseGroup.add(base, walls, roof, door);
-        houseGroup.position.set(pos[0], 0.3, pos[1]);
-        houseGroup.userData = { id: idx + 1, name: `Subsidized House #${idx + 1}` };
+        // 1. Lantai Kavling & Jalan Setapak ke Jalan Raya
+        hGroup.add(createBlock(5.2, 0.2, 5.2, 0xcbd5e1, 0, 0.1, 0));
+        hGroup.add(createBlock(1.2, 0.15, 2.2, 0x94a3b8, 0, 0.08, 3.2)); // Jalan setapak depan pintu
 
-        cityGroup.add(houseGroup);
-        houses.push(houseGroup);
+        // 2. Dinding Rumah Utama + Teras Kayu
+        hGroup.add(createBlock(4.0, 2.6, 3.8, 0xffffff, 0, 1.4, 0));
+        hGroup.add(createBlock(1.6, 0.25, 1.0, 0x78350f, 0, 0.22, 2.2)); // Undakan teras depan
+
+        // 3. Atap Bertingkat (Minecraft Stepped Roof)
+        hGroup.add(createBlock(4.6, 0.5, 4.4, roofCol, 0, 2.9, 0));
+        hGroup.add(createBlock(3.8, 0.5, 3.6, roofCol, 0, 3.4, 0));
+        hGroup.add(createBlock(2.8, 0.45, 2.8, roofCol, 0, 3.85, 0));
+
+        // 4. CEROBONG ASAP BATA (CHIMNEY) + Lubang Hitam
+        hGroup.add(createBlock(0.75, 2.2, 0.75, 0x991b1b, 1.35, 3.6, -0.8)); // Bata Merah
+        hGroup.add(createBlock(0.9, 0.25, 0.9, 0x7f1d1d, 1.35, 4.65, -0.8));  // Bibir Cerobong
+
+        // Partikel Asap Voxel di Atas Cerobong Setiap Rumah
+        for (let s = 0; s < 3; s++) {
+          const puff = createBlock(0.45, 0.45, 0.45, 0xf1f5f9, pos.x + 1.35, 4.9 + s * 0.8, pos.z - 0.8, false, false);
+          puff.material.transparent = true;
+          puff.material.opacity = 0.75;
+          puff.userData = { baseX: pos.x + 1.35, baseZ: pos.z - 0.8, offset: s * 2.1 + idx };
+          cityGroup.add(puff);
+          smokeParticles.push(puff);
+        }
+
+        // 5. Pintu Kayu + Gagang Emas + Jendela Kiri Kanan + Pot Bunga
+        hGroup.add(createBlock(1.0, 1.8, 0.15, roofCol, 0, 1.1, 1.92));
+        hGroup.add(createBlock(0.15, 0.15, 0.22, 0xfacc15, 0.3, 1.0, 1.98)); // Gagang pintu
+
+        [-1.25, 1.25].forEach(wx => {
+          const win = createBlock(0.85, 0.85, 0.15, 0xbae6fd, wx, 1.5, 1.92);
+          hGroup.add(win);
+          nightWindows.push(win.material);
+          // Pot Bunga di Bawah Jendela
+          hGroup.add(createBlock(0.95, 0.25, 0.35, 0x9a3412, wx, 0.95, 2.05));
+          hGroup.add(createBlock(0.75, 0.25, 0.25, 0x16a34a, wx, 1.15, 2.05));
+        });
+
+        hGroup.position.set(pos.x, 0, pos.z);
+        hGroup.rotation.y = pos.rot;
+        hGroup.userData = { id: idx + 1, name: `Subsidized House #${idx + 1}`, roofColor: roofCol };
+
+        cityGroup.add(hGroup);
+        clickableHouses.push(hGroup);
       });
     }
 
-    // Interaksi Klik Rumah 3D
-    function onPointerClick(event) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    buildWorld();
 
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(cityGroup.children, true);
+    // =========================================================
+    // 3. INTERAKSI KLIK RUMAH (TANPA BENTROK DENGAN GESER LAYAR)
+    // =========================================================
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let downX = 0, downY = 0;
 
+    renderer.domElement.addEventListener("pointerdown", (e) => {
+      downX = e.clientX;
+      downY = e.clientY;
+    });
+
+    renderer.domElement.addEventListener("pointerup", (e) => {
+      if (Math.hypot(e.clientX - downX, e.clientY - downY) > 7) return; // Abaikan jika sedang drag layar
+
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+
+      const intersects = raycaster.intersectObjects(clickableHouses, true);
       if (intersects.length > 0) {
         let obj = intersects[0].object;
-        while (obj.parent && obj.parent !== cityGroup) {
+        while (obj.parent && !obj.userData.name) {
           obj = obj.parent;
         }
         if (obj.userData && obj.userData.name) {
-          openInterior(obj.userData);
+          open3DInterior(obj.userData);
         }
       }
+    });
+
+    // =========================================================
+    // 4. ENGINE 3D INTERIOR KAMAR DETAIL (SAAT RUMAH DIKLIK)
+    // =========================================================
+    let roomScene, roomCamera, roomRenderer, roomBedBlanket, roomAnimId;
+
+    function initRoom3D() {
+      const box = document.getElementById("room3dContainer");
+      roomScene = new THREE.Scene();
+      roomScene.background = new THREE.Color(0x0f172a);
+
+      roomCamera = new THREE.PerspectiveCamera(40, box.clientWidth / box.clientHeight, 0.1, 100);
+      roomCamera.position.set(7.5, 6.5, 7.5);
+      roomCamera.lookAt(0, 1.2, 0);
+
+      roomRenderer = new THREE.WebGLRenderer({ antialias: true });
+      roomRenderer.setSize(box.clientWidth, box.clientHeight);
+      roomRenderer.shadowMap.enabled = true;
+      box.appendChild(roomRenderer.domElement);
+
+      roomScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const rLight = new THREE.PointLight(0xffedd5, 1.2, 20);
+      rLight.position.set(2, 5, 2);
+      rLight.castShadow = true;
+      roomScene.add(rLight);
+
+      // Lantai Papan Kayu & Dinding Cutaway
+      roomScene.add(createBlock(6, 0.3, 6, 0x78350f, 0, 0, 0));
+      roomScene.add(createBlock(6, 4, 0.3, 0xf1f5f9, 0, 2, -2.85)); // Dinding Belakang
+      roomScene.add(createBlock(0.3, 4, 6, 0xe2e8f0, -2.85, 2, 0)); // Dinding Kiri
+
+      // Jendela Kamar + Bingkai Kayu
+      roomScene.add(createBlock(1.8, 1.6, 0.36, 0x38bdf8, 0.5, 2.3, -2.85));
+
+      // KARPET LANTAI TENGAH
+      roomScene.add(createBlock(3.2, 0.08, 2.4, 0xfef3c7, 0.3, 0.18, 0.3));
+
+      // KASUR 3D MINECRAFT DETAIL (Rangka Kayu, Kepala Kasur, Bantal Empuk, Selimut)
+      roomScene.add(createBlock(1.8, 0.45, 2.8, 0x92400e, -1.6, 0.38, -0.8)); // Rangka Kayu
+      roomScene.add(createBlock(1.8, 1.3, 0.3, 0x78350f, -1.6, 0.8, -2.1));   // Sandaran Kepala
+      roomScene.add(createBlock(1.4, 0.25, 0.65, 0xffffff, -1.6, 0.72, -1.55)); // Bantal Putih
+      roomBedBlanket = createBlock(1.65, 0.32, 1.85, 0x0284c7, -1.6, 0.65, -0.35); // Selimut
+      roomScene.add(roomBedBlanket);
+
+      // RAK BUKU WARNA-WARNI
+      roomScene.add(createBlock(0.8, 2.4, 1.6, 0x78350f, -2.2, 1.35, 1.5));
+      roomScene.add(createBlock(0.86, 0.4, 1.3, 0xef4444, -2.18, 1.8, 1.5));
+      roomScene.add(createBlock(0.86, 0.4, 1.3, 0x22c55e, -2.18, 1.1, 1.5));
+
+      // MEJA PAJANGAN PRODUK SHOPIFY + LAMPU BULAN MELAYANG
+      roomScene.add(createBlock(1.6, 1.1, 1.0, 0xb45309, 1.6, 0.7, -1.9));
+      const moonLamp = createBlock(0.55, 0.55, 0.55, 0xfef08a, 1.6, 1.65, -1.9);
+      roomScene.add(moonLamp);
     }
 
-    function openInterior(houseData) {
+    function open3DInterior(houseData) {
       document.getElementById("roomTitle").textContent = houseData.name.toUpperCase();
       document.getElementById("interiorModal").classList.remove("hidden");
+
+      if (!roomRenderer) initRoom3D();
+      roomBedBlanket.material.color.setHex(houseData.roofColor);
+
+      function renderRoomLoop() {
+        roomAnimId = requestAnimationFrame(renderRoomLoop);
+        roomScene.rotation.y = Math.sin(tick * 0.015) * 0.18;
+        roomRenderer.render(roomScene, roomCamera);
+      }
+      if (roomAnimId) cancelAnimationFrame(roomAnimId);
+      renderRoomLoop();
     }
 
     function closeInterior() {
       document.getElementById("interiorModal").classList.add("hidden");
+      if (roomAnimId) cancelAnimationFrame(roomAnimId);
     }
 
+    // =========================================================
+    // 5. MODE SIANG / MALAM & LOOP ANIMASI UTAMA
+    // =========================================================
     function toggleNightMode() {
       isNight = !isNight;
-      document.getElementById("nightBtn").textContent = isNight ? "☀️ Day Mode" : "🌙 Night Mode";
-      if (isNight) {
-        scene.background.set(0x060913);
-        scene.fog.color.set(0x060913);
-        ambientLight.color.set(0x1e293b);
-        ambientLight.intensity = 0.4;
-        dirLight.color.set(0x38bdf8);
-        dirLight.intensity = 0.3;
-      } else {
-        scene.background.set(0x38bdf8);
-        scene.fog.color.set(0x38bdf8);
-        ambientLight.color.set(0xffffff);
-        ambientLight.intensity = 0.6;
-        dirLight.color.set(0xfffbeb);
-        dirLight.intensity = 1.2;
-      }
+      document.getElementById("nightBtn").textContent = isNight ? "☀️ Day" : "🌙 Night";
+      scene.background.setHex(isNight ? 0x090d16 : 0x7dd3fc);
+      scene.fog.color.setHex(isNight ? 0x090d16 : 0x7dd3fc);
+      ambientLight.intensity = isNight ? 0.25 : 0.65;
+      sunLight.intensity = isNight ? 0.35 : 1.25;
+
+      nightWindows.forEach(mat => {
+        mat.color.setHex(isNight ? 0xfef08a : 0xbae6fd);
+        mat.emissive = new THREE.Color(isNight ? 0xfacc15 : 0x000000);
+        mat.emissiveIntensity = isNight ? 0.8 : 0;
+      });
     }
 
-    function resetCamera() {
-      camera.position.set(30, 25, 30);
-      camera.lookAt(0, 0, 0);
-    }
-
-    function onWindowResize() {
+    window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    });
 
-    // Rotasi Otomatis Lembut & Render Loop
-    let angle = 0;
+    const bubbleEl = document.getElementById("mayorBubble");
+
     function animate() {
       requestAnimationFrame(animate);
+      tick++;
+      controls.update();
 
-      // Kamera berputar perlahan mengelilingi kota agar terlihat sinematik
-      angle += 0.001;
-      camera.position.x = Math.cos(angle) * 38;
-      camera.position.z = Math.sin(angle) * 38;
-      camera.lookAt(0, 0, 0);
+      // 1. Animasi Kepulan Asap Cerobong Rumah
+      smokeParticles.forEach(p => {
+        const cycle = ((tick * 0.025 + p.userData.offset) % 2.8);
+        p.position.y = 4.8 + cycle;
+        p.position.x = p.userData.baseX + Math.sin(tick * 0.04 + p.userData.offset) * 0.2;
+        p.material.opacity = Math.max(0, 0.8 - (cycle / 2.8) * 0.8);
+      });
+
+      // 2. Animasi Air Mancur Tengah Kota
+      fountainDrops.forEach(d => {
+        const t = (tick * d.userData.speed + d.userData.phase) % 1;
+        const radius = 0.4 + t * 1.4;
+        d.position.x = Math.cos(d.userData.angle) * radius;
+        d.position.z = Math.sin(d.userData.angle) * radius;
+        d.position.y = 3.2 - (t * t * 2.6);
+      });
+
+      // 3. Animasi Mayor & Update Posisi Speech Bubble di Atas Topi Hitamnya
+      if (mayorGroup) {
+        mayorGroup.position.y = 0.15 + Math.abs(Math.sin(tick * 0.07)) * 0.15;
+        mayorGroup.rotation.y = Math.sin(tick * 0.02) * 0.35;
+
+        const headPos = new THREE.Vector3(0, 4.1, 4.2);
+        headPos.project(camera);
+        if (headPos.z < 1) {
+          const sx = (headPos.x * 0.5 + 0.5) * window.innerWidth;
+          const sy = (-(headPos.y * 0.5) + 0.5) * window.innerHeight;
+          bubbleEl.style.left = `${sx}px`;
+          bubbleEl.style.top = `${sy}px`;
+          bubbleEl.style.opacity = "1";
+        } else {
+          bubbleEl.style.opacity = "0";
+        }
+      }
 
       renderer.render(scene, camera);
     }
 
-    init3D();
+    animate();
   </script>
 </body>
 </html>
