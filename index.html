@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NexatonCity - Floating Island 3D Voxel World</title>
+  <title>NexatonCity - Living 3D Voxel World</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -62,10 +62,10 @@
   <div id="labelsContainer"></div>
 
   <!-- FLOATING MAYOR SPEECH BUBBLE -->
-  <div id="mayorBubble" class="bg-white px-3.5 py-2 rounded-2xl shadow-xl text-center min-w-[160px] max-w-[225px]" style="border: 3px solid #0f172a;">
+  <div id="mayorBubble" class="bg-white px-3.5 py-2 rounded-2xl shadow-xl text-center min-w-[165px] max-w-[235px]" style="border: 3px solid #0f172a;">
     <div class="text-[9px] font-extrabold uppercase text-amber-600 tracking-wider">🎩 @mayorofnexatoncity</div>
     <div id="mayorSpeechText" class="text-xs font-extrabold text-slate-900 leading-snug mt-0.5">
-      "Welcome to NexatonCity! 🏙️"
+      "Welcome @Godkingters 2.0 to House #3! 🎉"
     </div>
     <div class="w-3 h-3 bg-white rotate-45 mx-auto -mb-3.5 mt-1" style="border-right:3px solid #0f172a; border-bottom:3px solid #0f172a;"></div>
   </div>
@@ -81,7 +81,7 @@
           <span id="timeBadge" class="bg-sky-500/20 border border-sky-400 text-sky-300 text-[10px] font-bold px-1.5 py-0.5 rounded">☀️ DAY</span>
         </div>
         <p class="text-[11px] text-slate-300 mt-1">
-          👥 Citizens: <span id="hudCitizens" class="text-emerald-400 font-bold">2</span> | 🏠 Empty: <span id="hudEmpty" class="text-white font-bold">10</span> | 🏝️ Islands: <span id="hudIslands" class="text-sky-300 font-bold">1</span> | <span id="biomeHud" class="text-amber-300 font-bold">🐰 Bunnies</span>
+          👥 Citizens: <span id="hudCitizens" class="text-emerald-400 font-bold">3</span> | 🏠 Empty: <span id="hudEmpty" class="text-white font-bold">9</span> | 🏝️ Islands: <span id="hudIslands" class="text-sky-300 font-bold">1</span> | <span id="biomeHud" class="text-amber-300 font-bold">🐰 Bunnies</span>
         </p>
       </div>
     </div>
@@ -91,7 +91,7 @@
       <input
         id="searchInput"
         type="text"
-        placeholder="Find @steve, @alex, or @you..."
+        placeholder="Find @Godkingters 2.0, @steve..."
         class="bg-slate-900 text-white text-xs px-3 py-2 rounded-lg w-full border border-slate-700 focus:outline-none focus:border-sky-400"
         onkeydown="if(event.key==='Enter') searchCitizen()"
       />
@@ -102,6 +102,9 @@
 
     <!-- Main Actions -->
     <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
+      <button onclick="focusCitizenById(3)" class="mc-btn text-slate-950 font-black text-xs px-3 py-2.5 rounded-xl flex items-center gap-1" title="Zoom to Newest Commenter">
+        <span>⚡</span> <span>NEWEST: @Godkingters 2.0</span>
+      </button>
       <button onclick="openClaimModal()" class="mc-btn-emerald text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
         <span>🏠</span> <span>CLAIM FREE HOUSE</span>
       </button>
@@ -117,9 +120,9 @@
   <!-- BOTTOM INFO BAR -->
   <div class="fixed bottom-3 left-3 right-3 z-20 flex items-end justify-between pointer-events-none">
     <div class="mc-panel p-3 rounded-xl text-white pointer-events-auto max-w-md">
-      <div class="pixel-font text-[9px] text-emerald-400 mb-1">🏝️ AUTO-EXPANDING FLOATING ISLANDS</div>
+      <div class="pixel-font text-[9px] text-emerald-400 mb-1">🌳 COMMENT REWARD UNLOCKED: @Godkingters 2.0</div>
       <p class="text-[11px] text-slate-300 leading-relaxed">
-        When all 12 houses on the main island are claimed, the city automatically builds a bridge and expands with a new Floating Island district!
+        <strong>@Godkingters 2.0</strong> commented on TikTok & unlocked House #3 with a custom <strong>Naoya Zenin Avatar</strong> + <strong>Free Yard, Fence & Oak Tree</strong>! Comment on TikTok to get yours!
       </p>
     </div>
   </div>
@@ -138,7 +141,7 @@
       <div class="p-5 space-y-4">
         <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-700 space-y-2">
           <div class="text-xs font-extrabold text-sky-400">STEP 1: FOLLOW THE MAYOR ON TIKTOK</div>
-          <p class="text-[11px] text-slate-300">Join Steve & Alex! Every follower gets a free Subsidized House. If Block A is full, a new Floating Island will be built for you automatically!</p>
+          <p class="text-[11px] text-slate-300">Join Steve, Alex & @Godkingters 2.0! Every follower gets a free Subsidized House. Comment on TikTok to unlock a Free Yard & Oak Tree!</p>
           <a href="https://www.tiktok.com/@mayorofnexatoncity" target="_blank" onclick="unlockClaimStep()"
              class="mc-btn w-full py-2.5 rounded-xl text-center text-slate-950 font-black text-xs block">
             ➕ Follow @mayorofnexatoncity on TikTok
@@ -157,6 +160,10 @@
             <input type="checkbox" id="followConfirmCheck" class="w-4 h-4 accent-emerald-500" />
             <label for="followConfirmCheck">I have followed <strong>@mayorofnexatoncity</strong></label>
           </div>
+          <div class="flex items-center gap-2 text-[11px] text-emerald-300 pt-1">
+            <input type="checkbox" id="commentConfirmCheck" class="w-4 h-4 accent-emerald-500" />
+            <label for="commentConfirmCheck">🌳 I also commented on TikTok (Unlock Free Yard + Fence + Tree!)</label>
+          </div>
         </div>
 
         <button onclick="submitClaimHouse()" class="mc-btn-emerald w-full py-3.5 rounded-xl text-center text-slate-950 font-black text-xs sm:text-sm block">
@@ -166,7 +173,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: SHOP GATEWAY (ENSURES BUYER WRITES TIKTOK USERNAME) -->
+  <!-- MODAL 2: SHOP GATEWAY -->
   <div id="shopModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="mc-panel rounded-2xl max-w-md w-full overflow-hidden text-white shadow-2xl">
       <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
@@ -181,7 +188,7 @@
         <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-700 space-y-2.5">
           <div class="text-xs font-extrabold text-amber-400">1. ENTER YOUR TIKTOK USERNAME FIRST</div>
           <p class="text-[11px] text-slate-300 leading-relaxed">
-            Type your TikTok <strong class="text-white">@username</strong> below. We will copy it for your Shopify <strong>Cart Note</strong> so our system knows which house to upgrade into a <strong class="text-amber-300">2-Story VIP Cyber Villa</strong>!
+            Type your TikTok <strong class="text-white">@username</strong> below. We will copy it for your Shopify <strong>Cart Note</strong> so our system upgrades your house into a <strong class="text-amber-300">2-Story VIP Cyber Villa</strong>!
           </p>
           <input
             id="shopUsernameInput"
@@ -218,8 +225,11 @@
         <div id="roomOwnerBanner" class="absolute top-2 left-2 bg-slate-900/90 border border-slate-700 px-2.5 py-1 rounded text-[11px] text-sky-300 font-bold">
           👤 Owner: Unclaimed
         </div>
+        <div id="roomYardBanner" class="absolute bottom-2 left-2 bg-slate-900/90 border border-slate-700 px-2 py-0.5 rounded text-[10px] text-emerald-300 font-bold">
+          🌳 Yard: Locked
+        </div>
         <div class="absolute bottom-2 right-2 bg-emerald-950/90 border border-emerald-600 px-2 py-0.5 rounded text-[10px] text-emerald-300 font-bold">
-          ⚡ Power: ON | 💧 Water Tank: FULL
+          ⚡ Power: ON | 💧 Water: FULL
         </div>
       </div>
 
@@ -230,8 +240,8 @@
             <div id="infoCitizen" class="font-bold text-emerald-400 mt-0.5 truncate">Empty Plot</div>
           </div>
           <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
-            <div class="text-slate-400 text-[10px]">BUILDING</div>
-            <div id="infoBuilding" class="font-bold text-sky-400 mt-0.5">Subsidized</div>
+            <div class="text-slate-400 text-[10px]">YARD & TREE</div>
+            <div id="infoYard" class="font-bold text-sky-400 mt-0.5">Locked 🔒</div>
           </div>
           <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-700">
             <div class="text-slate-400 text-[10px]">ROOM DECOR</div>
@@ -246,7 +256,7 @@
 
   <script>
     // =========================================================
-    // 0. KONEKSI SUPABASE & WARGA DEFAULT EPISODE 1 (STEVE & ALEX)
+    // 0. KONEKSI SUPABASE & WARGA RESMI (STEVE, ALEX, @Godkingters 2.0)
     // =========================================================
     const SUPABASE_URL = "https://rrxgvmnfwzuwespocmpr.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_n3eXwqjlZO-uVUW9ZOirHw_50W-7MkX";
@@ -257,9 +267,14 @@
       console.warn("Supabase fallback:", e);
     }
 
-    const defaultEpisode1Citizens = {
-      1: { username: "@steve", tier: "subsidized", decor: null, isDefaultNPC: true },
-      2: { username: "@alex", tier: "subsidized", decor: null, isDefaultNPC: true }
+    // Data Warga Default:
+    // #1: @steve
+    // #2: @alex
+    // #3: @Godkingters 2.0 (Avatar: Naoya Zenin + Free Yard, Fence & Oak Tree karena sudah komen!)
+    const defaultCitizens = {
+      1: { username: "@steve", tier: "subsidized", decor: null, has_yard: false, avatar: "steve" },
+      2: { username: "@alex", tier: "subsidized", decor: null, has_yard: false, avatar: "alex" },
+      3: { username: "@Godkingters 2.0", tier: "subsidized", decor: null, has_yard: true, avatar: "naoya" }
     };
 
     // =========================================================
@@ -284,7 +299,7 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.maxPolarAngle = Math.PI / 2.05;
-    controls.minDistance = 10;
+    controls.minDistance = 8;
     controls.maxDistance = 115;
     controls.target.set(0, 0, 2);
     controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
@@ -322,7 +337,13 @@
     const cloudsList = [];
     const weatherDrops = [];
     const treeFoliageMaterials = [];
-    const islandTopMeshes = []; // Semua permukaan rumput pulau agar sinkron warna musim
+    const islandTopMeshes = [];
+
+    // Daftar Animasi Aktivitas Warga di 5 Musim
+    const snowballsList = [];
+    const beachBallsList = [];
+    const campfireFlamesList = [];
+    const rainSplashRingsList = [];
 
     const seasonGroups = {
       sakura: new THREE.Group(),
@@ -374,19 +395,15 @@
     }
 
     // =========================================================
-    // 2. STRUKTUR PULAU MENGAMBANG (FLOATING ISLAND) & AUTO-EXPANSION
+    // 2. STRUKTUR PULAU MENGAMBANG, HALAMAN KOMEN (FREE YARD) & RUMAH
     // =========================================================
     function buildFloatingIslandBase(width, depth, centerX, centerZ) {
       const isl = new THREE.Group();
-      // Lapisan Atas: Rumput Pulau
       const topGrass = createBlock(width, 1.2, depth, 0x22c55e, 0, -0.6, 0, false, true);
       isl.add(topGrass);
       islandTopMeshes.push(topGrass);
 
-      // Lapisan Tanah Cokelat (Minecraft Dirt Layer)
       isl.add(createBlock(width * 0.94, 2.2, depth * 0.94, 0x78350f, 0, -2.3, 0, false, false));
-
-      // Lapisan Tebing Batu Meruncing ke Bawah (Floating Rock Cliffs)
       isl.add(createBlock(width * 0.82, 3.0, depth * 0.82, 0x64748b, 0, -4.9, 0, false, false));
       isl.add(createBlock(width * 0.64, 3.5, depth * 0.64, 0x475569, 0, -8.1, 0, false, false));
       isl.add(createBlock(width * 0.42, 4.0, depth * 0.42, 0x334155, 0, -11.8, 0, false, false));
@@ -396,14 +413,52 @@
       cityGroup.add(isl);
     }
 
-    // Fungsi Membuat 1 Kavling Rumah (Digunakan di Pulau Utama maupun Pulau Ekspansi)
+    // Fungsi Membuat 1 Kavling Rumah (Dilengkapi Grup Free Yard & Aktivitas Musiman)
     function createSingleHousePlot(houseId, x, z, rot) {
       const hGroup = new THREE.Group();
       const roofCol = houseColors[(houseId - 1) % houseColors.length];
 
-      hGroup.add(createBlock(5.4, 0.2, 5.4, 0xcbd5e1, 0, 0.1, 0));
-      hGroup.add(createBlock(1.2, 0.15, 2.2, 0x94a3b8, 0, 0.08, 3.2));
+      // Lantai Dasar Kavling Standar
+      hGroup.add(createBlock(5.6, 0.2, 5.6, 0xcbd5e1, 0, 0.1, 0));
+      hGroup.add(createBlock(1.2, 0.15, 2.4, 0x94a3b8, 0, 0.08, 3.4));
 
+      // --- HADIAH KOMENTAR TIKTOK: FREE YARD + PAGAR KAYU + POHON OAK ---
+      const yardGroup = new THREE.Group();
+      // Rumput Hijau Subur di Halaman Rumah
+      yardGroup.add(createBlock(5.8, 0.24, 6.2, 0x4ade80, 0, 0.12, 0.4, false, true));
+      // Jalan Setapak Batu Taman
+      yardGroup.add(createBlock(1.1, 0.26, 2.6, 0xe2e8f0, 0, 0.13, 2.4, false, true));
+      // Pagar Kayu Keliling Halaman (Minecraft Oak Fence)
+      for (let fx = -2.7; fx <= 2.7; fx += 0.9) {
+        if (Math.abs(fx) > 0.6) {
+          yardGroup.add(createBlock(0.18, 0.75, 0.18, 0x92400e, fx, 0.5, 3.35));
+        }
+      }
+      for (let fz = -2.4; fz <= 3.3; fz += 0.95) {
+        yardGroup.add(createBlock(0.18, 0.75, 0.18, 0x92400e, -2.75, 0.5, fz));
+        yardGroup.add(createBlock(0.18, 0.75, 0.18, 0x92400e, 2.75, 0.5, fz));
+      }
+      // Palang Pagar Horizontal
+      yardGroup.add(createBlock(1.9, 0.12, 0.1, 0xb45309, -1.8, 0.65, 3.35));
+      yardGroup.add(createBlock(1.9, 0.12, 0.1, 0xb45309, 1.8, 0.65, 3.35));
+      yardGroup.add(createBlock(0.1, 0.12, 5.8, 0xb45309, -2.75, 0.65, 0.4));
+      yardGroup.add(createBlock(0.1, 0.12, 5.8, 0xb45309, 2.75, 0.65, 0.4));
+
+      // Pohon Oak Pribadi di Pojok Halaman + Bunga Taman
+      yardGroup.add(createBlock(0.45, 1.6, 0.45, 0x78350f, -2.0, 0.9, 2.4));
+      const yLeaf1 = createBlock(1.7, 1.1, 1.7, 0x15803d, -2.0, 2.0, 2.4);
+      const yLeaf2 = createBlock(1.1, 0.85, 1.1, 0x22c55e, -2.0, 2.8, 2.4);
+      treeFoliageMaterials.push(yLeaf1.material, yLeaf2.material);
+      yardGroup.add(yLeaf1, yLeaf2);
+      // Petak Bunga Warna-warni di Kanan Halaman
+      yardGroup.add(createBlock(1.1, 0.3, 0.7, 0x78350f, 1.8, 0.26, 2.6));
+      yardGroup.add(createBlock(0.25, 0.45, 0.25, 0xf43f5e, 1.55, 0.45, 2.6));
+      yardGroup.add(createBlock(0.25, 0.45, 0.25, 0xfacc15, 2.0, 0.45, 2.6));
+
+      yardGroup.visible = false; // Hanya aktif jika warga sudah komen (has_yard: true)
+      hGroup.add(yardGroup);
+
+      // Sub-group 1: Wujud Rumah Subsidi
       const subMesh = new THREE.Group();
       subMesh.add(createBlock(4.0, 2.6, 3.8, 0xffffff, 0, 1.4, 0));
       subMesh.add(createBlock(1.6, 0.25, 1.0, 0x78350f, 0, 0.22, 2.2));
@@ -425,6 +480,7 @@
       });
       hGroup.add(subMesh);
 
+      // Sub-group 2: Wujud VIP Cyber Villa
       const villaMesh = new THREE.Group();
       villaMesh.add(createBlock(3.4, 2.6, 3.8, 0xf8fafc, -0.7, 1.4, 0));
       villaMesh.add(createBlock(3.2, 2.2, 3.2, 0x1e293b, -0.7, 3.8, -0.2));
@@ -459,6 +515,9 @@
         owner: null,
         tier: "subsidized",
         decor: null,
+        has_yard: false,
+        avatarType: "citizen",
+        yardGroup: yardGroup,
         subMesh: subMesh,
         villaMesh: villaMesh,
         avatarMesh: null,
@@ -470,9 +529,319 @@
       return hGroup;
     }
 
-    // FUNGSI PELEBARAN PULAU MENGAMBANG OTOMATIS SAAT KUOTA 12 RUMAH PENUH
+    // =========================================================
+    // 3. KARAKTER WARGA: STEVE, ALEX, DAN NAOYA ZENIN (@Godkingters 2.0)
+    // =========================================================
+    function spawnCitizenAvatarOnHouse(houseGroup, username, fallbackColor, avatarType) {
+      if (houseGroup.userData.avatarMesh) return;
+
+      const charGroup = new THREE.Group();
+      const uLower = (username || "").toLowerCase();
+      const isNaoya = avatarType === "naoya" || uLower.includes("godkingters");
+
+      let legL, legR, armL, armR;
+
+      if (isNaoya) {
+        // --- AVATAR KHUSUS: NAOYA ZENIN (Jujutsu Kaisen Style) ---
+        // Celana Hakama Lebar Putih-Abu (Khas Klan Zenin)
+        legL = createBlock(0.40, 0.68, 0.42, 0xd6d3d1, -0.21, 0.34, 0);
+        legR = createBlock(0.40, 0.68, 0.42, 0xd6d3d1, 0.21, 0.34, 0);
+        // Sabuk Obi Hitam
+        const obi = createBlock(0.84, 0.16, 0.48, 0x090d16, 0, 0.72, 0);
+        // Atasan Kimono/Kosode Gelap + Kerah Putih V-Neck
+        const body = createBlock(0.80, 0.82, 0.44, 0x1e293b, 0, 1.12, 0);
+        const collar = createBlock(0.28, 0.45, 0.46, 0xf8fafc, 0, 1.28, 0);
+        // Lengan Kimono Lebar (Haori Sleeves)
+        armL = createBlock(0.36, 0.78, 0.40, 0x1e293b, -0.58, 1.10, 0);
+        armR = createBlock(0.36, 0.78, 0.40, 0x1e293b, 0.58, 1.10, 0);
+        // Kepala & Wajah Smug Khas Naoya
+        const head = createBlock(0.76, 0.76, 0.76, 0xffedd5, 0, 1.90, 0);
+        // Mata Tajam Menyipit (Fox-like eyes)
+        const eyeL = createBlock(0.18, 0.08, 0.06, 0x0f172a, -0.18, 1.94, 0.39);
+        const eyeR = createBlock(0.18, 0.08, 0.06, 0x0f172a, 0.18, 1.94, 0.39);
+        // Rambut Pirang Naoya dengan Ujung/Samping Gelap (Blonde + Dark Undercut/Tips)
+        const hairTop = createBlock(0.84, 0.28, 0.84, 0xfacc15, 0, 2.34, 0);
+        const hairBangs = createBlock(0.82, 0.18, 0.24, 0xfde047, 0, 2.16, 0.35);
+        const hairDarkSideL = createBlock(0.12, 0.36, 0.78, 0x1e293b, -0.40, 2.05, 0);
+        const hairDarkSideR = createBlock(0.12, 0.36, 0.78, 0x1e293b, 0.40, 2.05, 0);
+        // Anting Tindik Khas Naoya Zenin (Emas/Perak di Telinga)
+        const piercingL = createBlock(0.08, 0.18, 0.08, 0xfef08a, -0.44, 1.88, 0.1);
+        const piercingR = createBlock(0.08, 0.18, 0.08, 0xfef08a, 0.44, 1.88, 0.1);
+
+        // Aura Frame Kecepatan (Projection Sorcery 24 FPS Effect)
+        const speedAura = createBlock(1.0, 1.9, 0.1, 0x38bdf8, 0, 1.1, -0.35, false, false);
+        speedAura.material.transparent = true;
+        speedAura.material.opacity = 0.28;
+
+        charGroup.add(
+          legL, legR, obi, body, collar, armL, armR,
+          head, eyeL, eyeR, hairTop, hairBangs, hairDarkSideL, hairDarkSideR,
+          piercingL, piercingR, speedAura
+        );
+      } else {
+        // --- AVATAR STEVE, ALEX, ATAU WARGA STANDAR ---
+        let shirtCol = fallbackColor;
+        let pantsCol = 0x1e3a8a;
+        let hairCol = 0x451a03;
+        let skinCol = 0xfde68a;
+
+        if (uLower === "@steve") {
+          shirtCol = 0x06b6d4; pantsCol = 0x1d4ed8; hairCol = 0x451a03; skinCol = 0xd97706;
+        } else if (uLower === "@alex") {
+          shirtCol = 0x16a34a; pantsCol = 0x78350f; hairCol = 0xea580c; skinCol = 0xfed7aa;
+        }
+
+        legL = createBlock(0.32, 0.6, 0.32, pantsCol, -0.18, 0.3, 0);
+        legR = createBlock(0.32, 0.6, 0.32, pantsCol, 0.18, 0.3, 0);
+        const body = createBlock(0.75, 0.8, 0.42, shirtCol, 0, 1.0, 0);
+        armL = createBlock(0.28, 0.75, 0.3, shirtCol, -0.52, 1.0, 0);
+        armR = createBlock(0.28, 0.75, 0.3, shirtCol, 0.52, 1.0, 0);
+        const head = createBlock(0.75, 0.75, 0.75, skinCol, 0, 1.8, 0);
+        const hair = createBlock(0.8, 0.24, 0.8, hairCol, 0, 2.22, 0);
+        const eyeL = createBlock(0.12, 0.12, 0.06, 0x0f172a, -0.16, 1.82, 0.38);
+        const eyeR = createBlock(0.12, 0.12, 0.06, 0x0f172a, 0.16, 1.82, 0.38);
+
+        charGroup.add(legL, legR, body, armL, armR, head, hair, eyeL, eyeR);
+      }
+
+      // Payung 3D Warga (Otomatis Muncul di Tangan Saat Musim Hujan!)
+      const citizenUmbrella = new THREE.Group();
+      citizenUmbrella.add(createBlock(0.08, 1.5, 0.08, 0xe2e8f0, 0.55, 1.8, 0.2));
+      citizenUmbrella.add(createBlock(1.5, 0.18, 1.5, fallbackColor, 0.55, 2.55, 0.2));
+      citizenUmbrella.visible = (seasons && seasons[currentSeasonIdx]?.id === "rain");
+      charGroup.add(citizenUmbrella);
+
+      // Bola Salju di Tangan (Otomatis Muncul Saat Musim Salju!)
+      const handSnowball = createBlock(0.26, 0.26, 0.26, 0xffffff, 0.55, 1.1, 0.35);
+      handSnowball.visible = (seasons && seasons[currentSeasonIdx]?.id === "snow");
+      charGroup.add(handSnowball);
+
+      charGroup.position.set(0.8, 0.18, 2.65);
+      charGroup.userData = {
+        legL, legR, armL, armR,
+        citizenUmbrella,
+        handSnowball,
+        isNaoya,
+        phase: houseGroup.userData.id * 1.3
+      };
+
+      houseGroup.add(charGroup);
+      houseGroup.userData.avatarMesh = charGroup;
+      citizenAvatars.push(charGroup);
+    }
+
+    // =========================================================
+    // 4. AKTIVITAS WARGA & ATMOSFER HIDUP DI 5 MUSIM
+    // =========================================================
+    const animalSpawnSpots = [
+      [-6.8, 6.8], [6.8, 6.8], [-6.8, -6.8], [6.8, -6.8],
+      [-13.5, 4.2], [13.5, 4.2], [-13.5, -4.2], [13.5, -4.2]
+    ];
+
+    function buildSeasonalBiomes() {
+      // ---------------------------------------------------------
+      // 1. MUSIM SALJU (WINTER SNOW):
+      // Warga bermain lempar bola salju (Flying Snowballs) + Membuat Boneka Salju + Pinguin
+      // ---------------------------------------------------------
+      const snowmenSpots = [
+        [-6.5, 8.2], [6.5, 8.2], [-6.5, -8.2], [6.5, -8.2],
+        [-10.5, -5.2], [-18.5, -5.2], [-10.5, -14.2] // Boneka salju buatan Steve, Alex, & Naoya di depan rumah mereka!
+      ];
+      snowmenSpots.forEach(([sx, sz]) => {
+        const sm = new THREE.Group();
+        sm.add(createBlock(1.1, 0.9, 1.1, 0xffffff, 0, 0.45, 0));
+        sm.add(createBlock(0.85, 0.75, 0.85, 0xf8fafc, 0, 1.25, 0));
+        sm.add(createBlock(0.65, 0.65, 0.65, 0xffffff, 0, 1.9, 0));
+        sm.add(createBlock(0.14, 0.14, 0.35, 0xf97316, 0, 1.9, 0.42));
+        sm.add(createBlock(0.1, 0.1, 0.08, 0x0f172a, -0.15, 2.02, 0.34));
+        sm.add(createBlock(0.1, 0.1, 0.08, 0x0f172a, 0.15, 2.02, 0.34));
+        sm.add(createBlock(0.95, 0.18, 0.95, 0xef4444, 0, 1.6, 0));
+        sm.add(createBlock(0.75, 0.12, 0.75, 0x0f172a, 0, 2.26, 0));
+        sm.add(createBlock(0.5, 0.45, 0.5, 0x1e293b, 0, 2.5, 0));
+        sm.position.set(sx, 0.1, sz);
+        seasonGroups.snow.add(sm);
+      });
+
+      // Bola Salju Melayang (Snowball Fight antar warga!)
+      const snowballPairs = [
+        { x1: -12, z1: -6.5, x2: -19, z2: -6.5 }, // Steve vs Alex lempar salju!
+        { x1: -12, z1: -14.5, x2: -12, z2: -7.0 }, // @Godkingters 2.0 (Naoya) vs Steve!
+        { x1: -5, z1: 5, x2: 5, z2: 5 },
+        { x1: 12, z1: -6.5, x2: 19, z2: -6.5 }
+      ];
+      snowballPairs.forEach((pair, idx) => {
+        const sb = createBlock(0.32, 0.32, 0.32, 0xffffff, pair.x1, 1.5, pair.z1, true, false);
+        sb.userData = { ...pair, phase: idx * 0.8 };
+        seasonGroups.snow.add(sb);
+        snowballsList.push(sb);
+      });
+
+      animalSpawnSpots.forEach(([ax, az], idx) => {
+        const pg = new THREE.Group();
+        pg.add(createBlock(0.46, 0.75, 0.4, 0x0f172a, 0, 0.42, 0));
+        pg.add(createBlock(0.36, 0.65, 0.08, 0xffffff, 0, 0.4, 0.18));
+        pg.add(createBlock(0.42, 0.4, 0.4, 0x0f172a, 0, 0.95, 0));
+        pg.add(createBlock(0.18, 0.12, 0.22, 0xf97316, 0, 0.9, 0.26));
+        pg.position.set(ax, 0.12, az);
+        pg.userData = { baseX: ax, baseZ: az, phase: idx * 1.1, moveType: "waddle", season: "snow" };
+        seasonGroups.snow.add(pg);
+        seasonalAnimals.push(pg);
+      });
+
+      // ---------------------------------------------------------
+      // 2. MUSIM PANAS (SUMMER):
+      // Warga bermain lempar Bola Pantai + Kolam Tiup + Payung Pantai + Bebek
+      // ---------------------------------------------------------
+      const beachSpots = [
+        [-6.5, 8.0, 0xef4444], [6.5, 8.0, 0x0ea5e9], [-6.5, -8.0, 0xfacc15], [6.5, -8.0, 0xec4899],
+        [-9.8, -15.5, 0x38bdf8], [-9.8, -6.5, 0xf97316] // Payung pantai & kursi berjemur di halaman warga
+      ];
+      beachSpots.forEach(([bx, bz, col]) => {
+        const umb = new THREE.Group();
+        umb.add(createBlock(0.14, 2.4, 0.14, 0xf8fafc, 0, 1.2, 0));
+        umb.add(createBlock(2.2, 0.25, 2.2, col, 0, 2.35, 0));
+        umb.add(createBlock(1.4, 0.2, 1.4, 0xffffff, 0, 2.52, 0));
+        umb.add(createBlock(0.9, 0.2, 1.6, 0xfef08a, 0.6, 0.2, 0));
+        umb.add(createBlock(0.9, 0.45, 0.3, 0xfacc15, 0.6, 0.4, -0.65));
+        umb.position.set(bx, 0.1, bz);
+        seasonGroups.summer.add(umb);
+      });
+
+      // Bola Pantai Memantul (Bouncing Beach Balls antar warga)
+      snowballPairs.forEach((pair, idx) => {
+        const bb = new THREE.Group();
+        bb.add(createBlock(0.45, 0.45, 0.45, 0xef4444, 0, 0, 0));
+        bb.add(createBlock(0.48, 0.2, 0.48, 0xfacc15, 0, 0, 0));
+        bb.add(createBlock(0.2, 0.48, 0.48, 0x38bdf8, 0, 0, 0));
+        bb.userData = { ...pair, phase: idx * 0.7 };
+        seasonGroups.summer.add(bb);
+        beachBallsList.push(bb);
+      });
+
+      animalSpawnSpots.forEach(([ax, az], idx) => {
+        const duck = new THREE.Group();
+        duck.add(createBlock(0.42, 0.35, 0.55, 0xfacc15, 0, 0.28, 0));
+        duck.add(createBlock(0.32, 0.32, 0.32, 0xfef08a, 0, 0.55, 0.18));
+        duck.add(createBlock(0.22, 0.1, 0.22, 0xf97316, 0, 0.5, 0.4));
+        duck.position.set(ax, 0.12, az);
+        duck.userData = { baseX: ax, baseZ: az, phase: idx * 0.9, moveType: "waddle", season: "summer" };
+        seasonGroups.summer.add(duck);
+        seasonalAnimals.push(duck);
+      });
+
+      // ---------------------------------------------------------
+      // 3. MUSIM SEMI (SAKURA):
+      // Warga Piknik Hanami + Lentera Kertas Pink Menyala + Kelinci
+      // ---------------------------------------------------------
+      const picnicSpots = [[-6.5, 8.0], [6.5, -8.0], [-14.2, -5.8], [-14.2, -14.8]];
+      picnicSpots.forEach(([px, pz]) => {
+        const pic = new THREE.Group();
+        pic.add(createBlock(2.2, 0.06, 2.2, 0xf43f5e, 0, 0.04, 0));
+        pic.add(createBlock(1.8, 0.08, 1.8, 0xffffff, 0, 0.05, 0));
+        pic.add(createBlock(0.6, 0.45, 0.45, 0xb45309, 0.3, 0.28, 0.2)); // Keranjang Bento
+        // Tiang Lentera Festival Sakura (Hanami Lantern)
+        pic.add(createBlock(0.12, 2.2, 0.12, 0x451a03, -0.9, 1.1, -0.9));
+        const lantern = new THREE.Mesh(
+          new THREE.BoxGeometry(0.45, 0.55, 0.45),
+          new THREE.MeshBasicMaterial({ color: 0xf472b6 })
+        );
+        lantern.position.set(-0.9, 2.1, -0.9);
+        pic.add(lantern);
+        pic.position.set(px, 0.12, pz);
+        seasonGroups.sakura.add(pic);
+      });
+
+      animalSpawnSpots.forEach(([ax, az], idx) => {
+        const bun = new THREE.Group();
+        const bCol = idx % 2 === 0 ? 0xffffff : 0xfbcfe8;
+        bun.add(createBlock(0.38, 0.32, 0.48, bCol, 0, 0.22, 0));
+        bun.add(createBlock(0.32, 0.3, 0.32, bCol, 0, 0.45, 0.18));
+        bun.add(createBlock(0.1, 0.38, 0.1, bCol, -0.09, 0.72, 0.18));
+        bun.add(createBlock(0.1, 0.38, 0.1, bCol, 0.09, 0.72, 0.18));
+        bun.position.set(ax, 0.12, az);
+        bun.userData = { baseX: ax, baseZ: az, phase: idx * 1.3, moveType: "hop", season: "sakura" };
+        seasonGroups.sakura.add(bun);
+        seasonalAnimals.push(bun);
+      });
+
+      // ---------------------------------------------------------
+      // 4. MUSIM GUGUR (AUTUMN):
+      // Warga Berkumpul di Api Unggun (Campfire) + Labu Menyala + Rubah
+      // ---------------------------------------------------------
+      const campfireSpots = [[-6.5, 8.0], [6.5, 8.0], [-10.2, -5.5], [-10.2, -14.5]];
+      campfireSpots.forEach(([cx, cz], idx) => {
+        const cf = new THREE.Group();
+        // Kayu Bakar Menyilang
+        cf.add(createBlock(1.1, 0.2, 0.25, 0x451a03, 0, 0.12, 0));
+        cf.add(createBlock(0.25, 0.2, 1.1, 0x78350f, 0, 0.15, 0));
+        // Api Unggun Menyala
+        const flame = new THREE.Mesh(
+          new THREE.BoxGeometry(0.55, 0.7, 0.55),
+          new THREE.MeshBasicMaterial({ color: 0xf97316 })
+        );
+        flame.position.set(0, 0.5, 0);
+        flame.userData = { phase: idx };
+        cf.add(flame);
+        campfireFlamesList.push(flame);
+
+        // Labu Jack-o'-Lantern di Samping Api Unggun
+        cf.add(createBlock(0.75, 0.65, 0.75, 0xea580c, 1.1, 0.32, 0.3));
+        cf.add(createBlock(0.16, 0.22, 0.16, 0x15803d, 1.1, 0.7, 0.3));
+        cf.position.set(cx, 0.12, cz);
+        seasonGroups.autumn.add(cf);
+      });
+
+      animalSpawnSpots.forEach(([ax, az], idx) => {
+        const fox = new THREE.Group();
+        fox.add(createBlock(0.36, 0.32, 0.62, 0xea580c, 0, 0.28, 0));
+        fox.add(createBlock(0.38, 0.32, 0.36, 0xf97316, 0, 0.46, 0.28));
+        fox.add(createBlock(0.24, 0.24, 0.45, 0xf97316, 0, 0.32, -0.45));
+        fox.position.set(ax, 0.12, az);
+        fox.userData = { baseX: ax, baseZ: az, phase: idx * 1.5, moveType: "hop", season: "autumn" };
+        seasonGroups.autumn.add(fox);
+        seasonalAnimals.push(fox);
+      });
+
+      // ---------------------------------------------------------
+      // 5. MUSIM HUJAN (RAINY):
+      // Warga Memegang Payung + Melompat di Genangan Air (Splash Rings) + Kodok
+      // ---------------------------------------------------------
+      const puddleSpots = [
+        [-6.5, 8.0], [6.5, 8.0], [-6.5, -8.0], [6.5, -8.0],
+        [-11.5, -5.8], [-19.5, -5.8], [-11.5, -14.8] // Genangan air tempat warga melompat!
+      ];
+      puddleSpots.forEach(([rx, rz], idx) => {
+        const pd = new THREE.Group();
+        pd.add(createBlock(1.7, 0.04, 1.5, 0x38bdf8, 0, 0.02, 0, false, true));
+        // Cincin Cipratan Air (Splash Ring Animasi)
+        const ring = new THREE.Mesh(
+          new THREE.BoxGeometry(0.6, 0.06, 0.6),
+          new THREE.MeshBasicMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.8 })
+        );
+        ring.position.set(0, 0.05, 0);
+        ring.userData = { phase: idx * 0.9 };
+        pd.add(ring);
+        rainSplashRingsList.push(ring);
+
+        pd.position.set(rx, 0.12, rz);
+        seasonGroups.rain.add(pd);
+      });
+
+      animalSpawnSpots.forEach(([ax, az], idx) => {
+        const frog = new THREE.Group();
+        frog.add(createBlock(0.42, 0.26, 0.44, 0x16a34a, 0, 0.16, 0));
+        frog.add(createBlock(0.36, 0.08, 0.38, 0xbef264, 0, 0.12, 0.04));
+        frog.position.set(ax, 0.12, az);
+        frog.userData = { baseX: ax, baseZ: az, phase: idx * 1.4, moveType: "frogJump", season: "rain" };
+        seasonGroups.rain.add(frog);
+        seasonalAnimals.push(frog);
+      });
+    }
+
+    // =========================================================
+    // 5. INFRASTRUKTUR BUNDARAN, LAMPU MERAH, JAM KUNING & AUTO-ISLAND
+    // =========================================================
     const expansionDirections = [
-      // Ekspansi 1 (Block B - Selatan): Jembatan & Pulau Baru
       {
         islandX: 0, islandZ: 56, width: 28, depth: 24,
         bridgeX: 0, bridgeZ: 41.5, bridgeW: 4.6, bridgeD: 9.0,
@@ -484,7 +853,6 @@
           { dx: 7.5, dz: 5, rot: -Math.PI / 2 }
         ]
       },
-      // Ekspansi 2 (Block C - Barat): Jembatan & Pulau Baru
       {
         islandX: -56, islandZ: 0, width: 24, depth: 28,
         bridgeX: -41.5, bridgeZ: 0, bridgeW: 9.0, bridgeD: 4.6,
@@ -496,7 +864,6 @@
           { dx: 5, dz: 7.5, rot: Math.PI }
         ]
       },
-      // Ekspansi 3 (Block D - Timur): Jembatan & Pulau Baru
       {
         islandX: 56, islandZ: 0, width: 24, depth: 28,
         bridgeX: 41.5, bridgeZ: 0, bridgeW: 9.0, bridgeD: 4.6,
@@ -520,7 +887,6 @@
       const bx = cfg.bridgeX * ringMultiplier;
       const bz = cfg.bridgeZ * ringMultiplier;
 
-      // 1. Bangun Jembatan Penghubung (Kayu & Pagar Besi)
       const bridge = new THREE.Group();
       bridge.add(createBlock(cfg.bridgeW, 0.35, cfg.bridgeD, 0x92400e, 0, 0.05, 0));
       bridge.add(createBlock(cfg.bridgeW, 0.6, 0.25, 0x475569, 0, 0.45, cfg.bridgeD / 2 - 0.15));
@@ -528,36 +894,28 @@
       bridge.position.set(bx, 0, bz);
       cityGroup.add(bridge);
 
-      // 2. Bangun Pulau Mengambang Baru
       buildFloatingIslandBase(cfg.width, cfg.depth, ix, iz);
 
-      // 3. Jalan Raya di Atas Pulau Baru
       cityGroup.add(createBlock(cfg.roadW + 1.2, 0.12, cfg.roadD + 1.2, 0x94a3b8, ix, 0.06, iz, false, true));
       cityGroup.add(createBlock(cfg.roadW, 0.15, cfg.roadD, 0x334155, ix, 0.075, iz, false, true));
 
-      // 4. Bangun 4 Rumah Subsidi Baru Otomatis di Pulau Mengambang Tersebut
       cfg.plots.forEach(p => {
         const nextHouseId = clickableHouses.length + 1;
         createSingleHousePlot(nextHouseId, ix + p.dx, iz + p.dz, p.rot);
       });
 
-      // Tambahkan Pepohonan di Sudut Pulau Baru
       createOakTree(ix - cfg.width / 2 + 2.5, iz - cfg.depth / 2 + 2.5, 0.9);
       createOakTree(ix + cfg.width / 2 - 2.5, iz + cfg.depth / 2 - 2.5, 0.9);
 
       spawnedExpansionIslands++;
       document.getElementById("hudIslands").textContent = 1 + spawnedExpansionIslands;
 
-      // Sinkronkan warna rumput pulau baru dengan musim yang sedang aktif
       if (seasons && seasons[currentSeasonIdx]) {
         const s = seasons[currentSeasonIdx];
         islandTopMeshes.forEach(m => m.material.color.setHex(isNight ? 0x0f172a : s.groundHex));
       }
     }
 
-    // =========================================================
-    // 3. BUNDARAN (ROUNDABOUT), TROTOAR, ZEBRA CROSS & LAMPU MERAH
-    // =========================================================
     function buildRoundaboutAndRoads() {
       cityGroup.add(createCylinderVoxel(8.6, 8.6, 0.14, 24, 0x94a3b8, 0, 0.07, 0));
       cityGroup.add(createCylinderVoxel(7.8, 7.8, 0.16, 24, 0x334155, 0, 0.08, 0));
@@ -571,7 +929,6 @@
         cityGroup.add(dash);
       }
 
-      // 4 Jalan Raya Utama
       cityGroup.add(createBlock(30.5, 0.12, 5.4, 0x94a3b8, -22.75, 0.06, 0, false, true));
       cityGroup.add(createBlock(30.5, 0.15, 4.0, 0x334155, -22.75, 0.075, 0, false, true));
       cityGroup.add(createBlock(30.5, 0.12, 5.4, 0x94a3b8, 22.75, 0.06, 0, false, true));
@@ -587,7 +944,6 @@
         cityGroup.add(createBlock(0.24, 0.17, 1.8, 0xfacc15, 0, 0.085, i, false, true));
       }
 
-      // Zebra Cross
       for (let s = -1.5; s <= 1.5; s += 0.75) {
         cityGroup.add(createBlock(1.3, 0.17, 0.38, 0xffffff, -8.8, 0.086, s, false, true));
         cityGroup.add(createBlock(1.3, 0.17, 0.38, 0xffffff, 8.8, 0.086, s, false, true));
@@ -595,7 +951,6 @@
         cityGroup.add(createBlock(0.38, 0.17, 1.3, 0xffffff, s, 0.086, 8.8, false, true));
       }
 
-      // 4 Lampu Lalu Lintas Aktif
       const tlConfigs = [
         { x: -9.6, z: 3.1, rot: Math.PI / 2, dirGroup: 0 },
         { x: 9.6, z: -3.1, rot: -Math.PI / 2, dirGroup: 0 },
@@ -629,145 +984,6 @@
       });
     }
 
-    // =========================================================
-    // 4. PEMBANGUNAN HEWAN & PROPERTI UNIK TIAP MUSIM
-    // =========================================================
-    const animalSpawnSpots = [
-      [-6.8, 6.8], [6.8, 6.8], [-6.8, -6.8], [6.8, -6.8],
-      [-13.5, 4.2], [13.5, 4.2], [-13.5, -4.2], [13.5, -4.2]
-    ];
-
-    function buildSeasonalBiomes() {
-      const snowmenSpots = [[-6.5, 8.2], [6.5, 8.2], [-6.5, -8.2], [6.5, -8.2], [-15, -4.2], [15, -4.2]];
-      snowmenSpots.forEach(([sx, sz]) => {
-        const sm = new THREE.Group();
-        sm.add(createBlock(1.1, 0.9, 1.1, 0xffffff, 0, 0.45, 0));
-        sm.add(createBlock(0.85, 0.75, 0.85, 0xf8fafc, 0, 1.25, 0));
-        sm.add(createBlock(0.65, 0.65, 0.65, 0xffffff, 0, 1.9, 0));
-        sm.add(createBlock(0.14, 0.14, 0.35, 0xf97316, 0, 1.9, 0.42));
-        sm.add(createBlock(0.1, 0.1, 0.08, 0x0f172a, -0.15, 2.02, 0.34));
-        sm.add(createBlock(0.1, 0.1, 0.08, 0x0f172a, 0.15, 2.02, 0.34));
-        sm.add(createBlock(0.95, 0.18, 0.95, 0xef4444, 0, 1.6, 0));
-        sm.add(createBlock(0.75, 0.12, 0.75, 0x0f172a, 0, 2.26, 0));
-        sm.add(createBlock(0.5, 0.45, 0.5, 0x1e293b, 0, 2.5, 0));
-        sm.position.set(sx, 0.1, sz);
-        seasonGroups.snow.add(sm);
-      });
-
-      animalSpawnSpots.forEach(([ax, az], idx) => {
-        const pg = new THREE.Group();
-        pg.add(createBlock(0.46, 0.75, 0.4, 0x0f172a, 0, 0.42, 0));
-        pg.add(createBlock(0.36, 0.65, 0.08, 0xffffff, 0, 0.4, 0.18));
-        pg.add(createBlock(0.42, 0.4, 0.4, 0x0f172a, 0, 0.95, 0));
-        pg.add(createBlock(0.18, 0.12, 0.22, 0xf97316, 0, 0.9, 0.26));
-        pg.add(createBlock(0.18, 0.08, 0.25, 0xfacc15, -0.14, 0.04, 0.08));
-        pg.add(createBlock(0.18, 0.08, 0.25, 0xfacc15, 0.14, 0.04, 0.08));
-        pg.position.set(ax, 0.12, az);
-        pg.userData = { baseX: ax, baseZ: az, phase: idx * 1.1, moveType: "waddle", season: "snow" };
-        seasonGroups.snow.add(pg);
-        seasonalAnimals.push(pg);
-      });
-
-      const beachSpots = [[-6.5, 8.0, 0xef4444], [6.5, 8.0, 0x0ea5e9], [-6.5, -8.0, 0xfacc15], [6.5, -8.0, 0xec4899]];
-      beachSpots.forEach(([bx, bz, col]) => {
-        const umb = new THREE.Group();
-        umb.add(createBlock(0.14, 2.4, 0.14, 0xf8fafc, 0, 1.2, 0));
-        umb.add(createBlock(2.2, 0.25, 2.2, col, 0, 2.35, 0));
-        umb.add(createBlock(1.4, 0.2, 1.4, 0xffffff, 0, 2.52, 0));
-        umb.add(createBlock(0.9, 0.2, 1.6, 0xfef08a, 0.6, 0.2, 0));
-        umb.add(createBlock(0.9, 0.45, 0.3, 0xfacc15, 0.6, 0.4, -0.65));
-        umb.position.set(bx, 0.1, bz);
-        seasonGroups.summer.add(umb);
-      });
-
-      animalSpawnSpots.forEach(([ax, az], idx) => {
-        const duck = new THREE.Group();
-        duck.add(createBlock(0.42, 0.35, 0.55, 0xfacc15, 0, 0.28, 0));
-        duck.add(createBlock(0.32, 0.32, 0.32, 0xfef08a, 0, 0.55, 0.18));
-        duck.add(createBlock(0.22, 0.1, 0.22, 0xf97316, 0, 0.5, 0.4));
-        duck.add(createBlock(0.12, 0.12, 0.08, 0xf97316, -0.1, 0.06, 0));
-        duck.add(createBlock(0.12, 0.12, 0.08, 0xf97316, 0.1, 0.06, 0));
-        duck.position.set(ax, 0.12, az);
-        duck.userData = { baseX: ax, baseZ: az, phase: idx * 0.9, moveType: "waddle", season: "summer" };
-        seasonGroups.summer.add(duck);
-        seasonalAnimals.push(duck);
-      });
-
-      [[-6.5, 8.0], [6.5, -8.0]].forEach(([px, pz]) => {
-        const pic = new THREE.Group();
-        pic.add(createBlock(2.2, 0.06, 2.2, 0xf43f5e, 0, 0.04, 0));
-        pic.add(createBlock(1.8, 0.08, 1.8, 0xffffff, 0, 0.05, 0));
-        pic.add(createBlock(0.6, 0.45, 0.45, 0xb45309, 0.3, 0.28, 0.2));
-        pic.position.set(px, 0.12, pz);
-        seasonGroups.sakura.add(pic);
-      });
-
-      animalSpawnSpots.forEach(([ax, az], idx) => {
-        const bun = new THREE.Group();
-        const bCol = idx % 2 === 0 ? 0xffffff : 0xfbcfe8;
-        bun.add(createBlock(0.38, 0.32, 0.48, bCol, 0, 0.22, 0));
-        bun.add(createBlock(0.32, 0.3, 0.32, bCol, 0, 0.45, 0.18));
-        bun.add(createBlock(0.1, 0.38, 0.1, bCol, -0.09, 0.72, 0.18));
-        bun.add(createBlock(0.1, 0.38, 0.1, bCol, 0.09, 0.72, 0.18));
-        bun.add(createBlock(0.14, 0.14, 0.14, 0xffffff, 0, 0.26, -0.28));
-        bun.position.set(ax, 0.12, az);
-        bun.userData = { baseX: ax, baseZ: az, phase: idx * 1.3, moveType: "hop", season: "sakura" };
-        seasonGroups.sakura.add(bun);
-        seasonalAnimals.push(bun);
-      });
-
-      const pumpkinSpots = [[-6.5, 8.0], [6.5, 8.0], [-6.5, -8.0], [6.5, -8.0], [-11.5, -4.5], [11.5, -4.5]];
-      pumpkinSpots.forEach(([px, pz]) => {
-        const pk = new THREE.Group();
-        pk.add(createBlock(0.75, 0.65, 0.75, 0xf97316, 0, 0.32, 0));
-        pk.add(createBlock(0.16, 0.22, 0.16, 0x15803d, 0, 0.7, 0));
-        pk.add(createBlock(0.5, 0.45, 0.5, 0xea580c, 0.65, 0.22, 0.2));
-        pk.position.set(px, 0.12, pz);
-        seasonGroups.autumn.add(pk);
-      });
-
-      animalSpawnSpots.forEach(([ax, az], idx) => {
-        const fox = new THREE.Group();
-        fox.add(createBlock(0.36, 0.32, 0.62, 0xea580c, 0, 0.28, 0));
-        fox.add(createBlock(0.38, 0.32, 0.36, 0xf97316, 0, 0.46, 0.28));
-        fox.add(createBlock(0.18, 0.14, 0.22, 0xffffff, 0, 0.38, 0.5));
-        fox.add(createBlock(0.1, 0.18, 0.1, 0x9a3412, -0.12, 0.68, 0.25));
-        fox.add(createBlock(0.1, 0.18, 0.1, 0x9a3412, 0.12, 0.68, 0.25));
-        fox.add(createBlock(0.24, 0.24, 0.45, 0xf97316, 0, 0.32, -0.45));
-        fox.add(createBlock(0.22, 0.22, 0.18, 0xffffff, 0, 0.32, -0.7));
-        fox.position.set(ax, 0.12, az);
-        fox.userData = { baseX: ax, baseZ: az, phase: idx * 1.5, moveType: "hop", season: "autumn" };
-        seasonGroups.autumn.add(fox);
-        seasonalAnimals.push(fox);
-      });
-
-      const puddleSpots = [[-6.5, 8.0], [6.5, 8.0], [-6.5, -8.0], [6.5, -8.0], [-12, -4.5], [12, 4.5]];
-      puddleSpots.forEach(([rx, rz]) => {
-        const pd = new THREE.Group();
-        pd.add(createBlock(1.6, 0.04, 1.4, 0x38bdf8, 0, 0.02, 0, false, true));
-        pd.add(createBlock(0.22, 0.5, 0.22, 0xfef3c7, 0.9, 0.25, 0.5));
-        pd.add(createBlock(0.65, 0.25, 0.65, 0xdc2626, 0.9, 0.58, 0.5));
-        pd.add(createBlock(0.18, 0.06, 0.18, 0xffffff, 0.9, 0.72, 0.5));
-        pd.position.set(rx, 0.12, rz);
-        seasonGroups.rain.add(pd);
-      });
-
-      animalSpawnSpots.forEach(([ax, az], idx) => {
-        const frog = new THREE.Group();
-        frog.add(createBlock(0.42, 0.26, 0.44, 0x16a34a, 0, 0.16, 0));
-        frog.add(createBlock(0.36, 0.08, 0.38, 0xbef264, 0, 0.12, 0.04));
-        frog.add(createBlock(0.12, 0.14, 0.12, 0x15803d, -0.12, 0.34, 0.12));
-        frog.add(createBlock(0.12, 0.14, 0.12, 0x15803d, 0.12, 0.34, 0.12));
-        frog.position.set(ax, 0.12, az);
-        frog.userData = { baseX: ax, baseZ: az, phase: idx * 1.4, moveType: "frogJump", season: "rain" };
-        seasonGroups.rain.add(frog);
-        seasonalAnimals.push(frog);
-      });
-    }
-
-    // =========================================================
-    // 5. INFRASTRUKTUR KOTA, JAM KUNING MENYALA & WALIKOTA
-    // =========================================================
     function createOakTree(x, z, scale = 1) {
       const g = new THREE.Group();
       g.add(createBlock(0.55 * scale, 1.8 * scale, 0.55 * scale, 0x78350f, 0, 0.9 * scale, 0));
@@ -931,7 +1147,7 @@
     function spawnClouds() {
       [
         [-22, 18, -18], [15, 20, -22], [-10, 19, 16], [24, 17, 12], [0, 21, -28],
-        [-38, -6, 18], [38, -8, -14], [0, -10, 42] // Awan di bawah Pulau Mengambang
+        [-38, -6, 18], [38, -8, -14], [0, -10, 42]
       ].forEach(([cx, cy, cz], idx) => {
         const cl = new THREE.Group();
         cl.add(createBlock(5.5, 0.9, 3.5, 0xffffff, 0, 0, 0, false, false));
@@ -951,9 +1167,7 @@
     ];
 
     function buildWorld() {
-      // Bangun Pulau Mengambang Utama (76x76) beserta Tebing Bawahnya
       buildFloatingIslandBase(76, 76, 0, 0);
-
       buildRoundaboutAndRoads();
 
       // Halte Bus Umum
@@ -1066,7 +1280,6 @@
       bananaPeelMesh.visible = false;
       cityGroup.add(bananaPeelMesh);
 
-      // 12 Kavling Rumah Pertama di Pulau Utama
       initialHouseCoords.forEach((pos, idx) => {
         createSingleHousePlot(idx + 1, pos.x, pos.z, pos.rot);
       });
@@ -1078,50 +1291,16 @@
       spawnClouds();
     }
 
-    function spawnCitizenAvatarOnHouse(houseGroup, username, fallbackColor) {
-      if (houseGroup.userData.avatarMesh) return;
-
-      let shirtCol = fallbackColor;
-      let pantsCol = 0x1e3a8a;
-      let hairCol = 0x451a03;
-      let skinCol = 0xfde68a;
-
-      if (username === "@steve") {
-        shirtCol = 0x06b6d4; pantsCol = 0x1d4ed8; hairCol = 0x451a03; skinCol = 0xd97706;
-      } else if (username === "@alex") {
-        shirtCol = 0x16a34a; pantsCol = 0x78350f; hairCol = 0xea580c; skinCol = 0xfed7aa;
-      }
-
-      const charGroup = new THREE.Group();
-      const legL = createBlock(0.32, 0.6, 0.32, pantsCol, -0.18, 0.3, 0);
-      const legR = createBlock(0.32, 0.6, 0.32, pantsCol, 0.18, 0.3, 0);
-      const body = createBlock(0.75, 0.8, 0.42, shirtCol, 0, 1.0, 0);
-      const armL = createBlock(0.28, 0.75, 0.3, shirtCol, -0.52, 1.0, 0);
-      const armR = createBlock(0.28, 0.75, 0.3, shirtCol, 0.52, 1.0, 0);
-      const head = createBlock(0.75, 0.75, 0.75, skinCol, 0, 1.8, 0);
-      const hair = createBlock(0.8, 0.24, 0.8, hairCol, 0, 2.22, 0);
-      const eyeL = createBlock(0.12, 0.12, 0.06, 0x0f172a, -0.16, 1.82, 0.38);
-      const eyeR = createBlock(0.12, 0.12, 0.06, 0x0f172a, 0.16, 1.82, 0.38);
-
-      charGroup.add(legL, legR, body, armL, armR, head, hair, eyeL, eyeR);
-      charGroup.position.set(1.2, 0.15, 2.8);
-      charGroup.userData = { legL, legR, armL, armR, phase: houseGroup.userData.id * 1.3 };
-
-      houseGroup.add(charGroup);
-      houseGroup.userData.avatarMesh = charGroup;
-      citizenAvatars.push(charGroup);
-    }
-
     buildWorld();
 
     // =========================================================
-    // 6. SINKRONISASI GLOBAL MUSIM & HEWAN (2 MALAM = 1 MUSIM)
+    // 6. SINKRONISASI GLOBAL MUSIM & AKTIVITAS WARGA
     // =========================================================
     const seasons = [
       {
         id: "sakura",
         badge: "🌸 SAKURA",
-        biomeLabel: "🐰 Bunnies & Picnic",
+        biomeLabel: "🍱 Hanami Picnic & Bunnies",
         groundHex: 0x4ade80,
         foliagePalette: [0xf472b6, 0xf9a8d4, 0xfbcfe8],
         skyDayHex: 0x93c5fd,
@@ -1136,7 +1315,7 @@
       {
         id: "summer",
         badge: "☀️ SUMMER",
-        biomeLabel: "🦆 Ducks & Umbrellas",
+        biomeLabel: "🏐 Beach Balls & Ducks",
         groundHex: 0x22c55e,
         foliagePalette: [0x15803d, 0x22c55e, 0x16a34a],
         skyDayHex: 0x38bdf8,
@@ -1151,7 +1330,7 @@
       {
         id: "autumn",
         badge: "🍂 AUTUMN",
-        biomeLabel: "🦊 Foxes & Pumpkins",
+        biomeLabel: "🔥 Campfires & Foxes",
         groundHex: 0xca8a04,
         foliagePalette: [0xd97706, 0xea580c, 0xb45309],
         skyDayHex: 0xfdba74,
@@ -1166,7 +1345,7 @@
       {
         id: "rain",
         badge: "🌧️ RAINY",
-        biomeLabel: "🐸 Frogs & Puddles",
+        biomeLabel: "☔ Umbrellas & Puddle Jumps",
         groundHex: 0x15803d,
         foliagePalette: [0x166534, 0x14532d, 0x065f46],
         skyDayHex: 0x64748b,
@@ -1181,7 +1360,7 @@
       {
         id: "snow",
         badge: "❄️ SNOW",
-        biomeLabel: "🐧 Penguins & Snowmen",
+        biomeLabel: "⛄ Snowball Fights & Snowmen",
         groundHex: 0xf8fafc,
         foliagePalette: [0xe2e8f0, 0xf1f5f9, 0xcbd5e1],
         skyDayHex: 0xcbd5e1,
@@ -1215,11 +1394,17 @@
 
         const s = seasons[currentSeasonIdx];
         document.getElementById("seasonBadge").textContent = s.badge;
-        document.getElementById("timeBadge").textContent = isNight ? "🌙 NIGHT (FIREFLIES)" : "☀️ DAY (BIRDS)";
+        document.getElementById("timeBadge").textContent = isNight ? "🌙 NIGHT" : "☀️ DAY";
         document.getElementById("biomeHud").textContent = s.biomeLabel;
 
         Object.keys(seasonGroups).forEach(k => {
           seasonGroups[k].visible = (k === s.id);
+        });
+
+        // Update properti tangan warga (Payung saat hujan, Bola salju saat salju)
+        citizenAvatars.forEach(av => {
+          if (av.userData.citizenUmbrella) av.userData.citizenUmbrella.visible = (s.id === "rain");
+          if (av.userData.handSnowball) av.userData.handSnowball.visible = (s.id === "snow");
         });
 
         islandTopMeshes.forEach(mesh => {
@@ -1260,12 +1445,14 @@
     updateGlobalSyncedEnvironment();
 
     // =========================================================
-    // 7. SINKRONISASI SUPABASE + AUTO-EXPANSION KETIKA 12 RUMAH PENUH
+    // 7. SINKRONISASI SUPABASE + @Godkingters 2.0 (NAOYA ZENIN)
     // =========================================================
-    let claimedData = { ...defaultEpisode1Citizens };
+    let claimedData = { ...defaultCitizens };
 
-    const localSaved = JSON.parse(localStorage.getItem("nexaton_citizens_v2") || "{}");
+    const localSaved = JSON.parse(localStorage.getItem("nexaton_citizens_v3") || "{}");
     Object.keys(localSaved).forEach(k => { claimedData[k] = localSaved[k]; });
+    // Pastikan rumah #3 selalu memiliki @Godkingters 2.0 + Free Yard + Naoya Zenin
+    claimedData[3] = { username: "@Godkingters 2.0", tier: "subsidized", decor: null, has_yard: true, avatar: "naoya" };
 
     async function loadCitizensData() {
       if (supabaseClient) {
@@ -1273,17 +1460,24 @@
           const { data, error } = await supabaseClient.from("citizens").select("*");
           if (!error && data) {
             data.forEach(row => {
+              const isNaoyaRow = row.house_id === 3 || (row.username && row.username.toLowerCase().includes("godkingters"));
               claimedData[row.house_id] = {
                 username: row.username,
                 tier: row.tier || "subsidized",
-                decor: row.decor || null
+                decor: row.decor || null,
+                has_yard: isNaoyaRow ? true : Boolean(row.has_commented || row.has_yard),
+                avatar: isNaoyaRow ? "naoya" : "citizen"
               };
             });
+            // Pastikan Steve (#1), Alex (#2), dan @Godkingters 2.0 (#3) selalu tersinkron di Supabase
             if (!data.find(r => r.house_id === 1)) {
               await supabaseClient.from("citizens").upsert({ house_id: 1, username: "@steve" });
             }
             if (!data.find(r => r.house_id === 2)) {
               await supabaseClient.from("citizens").upsert({ house_id: 2, username: "@alex" });
+            }
+            if (!data.find(r => r.house_id === 3)) {
+              await supabaseClient.from("citizens").upsert({ house_id: 3, username: "@Godkingters 2.0" });
             }
           }
         } catch (err) {
@@ -1296,11 +1490,9 @@
     setInterval(loadCitizensData, 10000);
 
     function refreshHousesState() {
-      // Cek ID rumah tertinggi yang sudah diklaim
       const claimedIds = Object.keys(claimedData).map(Number);
-      const maxClaimedId = claimedIds.length > 0 ? Math.max(...claimedIds) : 2;
+      const maxClaimedId = claimedIds.length > 0 ? Math.max(...claimedIds) : 3;
 
-      // Jika ada warga ke-12 atau lebih sehingga rumah kosong habis, otomatis bangun pulau mengambang baru!
       while (clickableHouses.length <= maxClaimedId || clickableHouses.filter(h => !claimedData[h.userData.id]).length === 0) {
         spawnNextExpansionIsland();
       }
@@ -1311,10 +1503,17 @@
         const owner = entry ? (typeof entry === "string" ? entry : entry.username) : null;
         const tier = entry && entry.tier ? entry.tier : "subsidized";
         const decor = entry && entry.decor ? entry.decor : null;
+        const hasYard = entry && entry.has_yard ? true : (h.userData.id === 3);
+        const avatarType = entry && entry.avatar ? entry.avatar : (h.userData.id === 3 ? "naoya" : "citizen");
 
         h.userData.owner = owner;
         h.userData.tier = tier;
         h.userData.decor = decor;
+        h.userData.has_yard = hasYard;
+        h.userData.avatarType = avatarType;
+
+        // Tampilkan Halaman Rumput, Pagar Kayu & Pohon Oak jika warga sudah komen!
+        h.userData.yardGroup.visible = Boolean(owner && hasYard);
 
         const isVilla = tier.toLowerCase().includes("villa") || tier.toLowerCase().includes("penthouse");
         h.userData.subMesh.visible = !isVilla;
@@ -1323,11 +1522,20 @@
         const lbl = h.userData.labelEl;
         if (owner) {
           claimedCount++;
-          spawnCitizenAvatarOnHouse(h, owner, h.userData.roofColor);
-          lbl.textContent = isVilla ? `🏰 ${owner} (VIP)` : `🏠 ${owner}`;
-          lbl.className = isVilla
-            ? "house-label bg-amber-400 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md"
-            : "house-label bg-emerald-500 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
+          spawnCitizenAvatarOnHouse(h, owner, h.userData.roofColor, avatarType);
+          if (isVilla) {
+            lbl.textContent = `🏰 ${owner} (VIP)`;
+            lbl.className = "house-label bg-amber-400 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
+          } else if (avatarType === "naoya") {
+            lbl.textContent = `⚡ ${owner} (Naoya Zenin + Yard 🌳)`;
+            lbl.className = "house-label bg-sky-400 text-slate-950 border-slate-900 px-2.5 py-0.5 rounded-md text-[10px] font-black shadow-lg";
+          } else if (hasYard) {
+            lbl.textContent = `🌳 ${owner}`;
+            lbl.className = "house-label bg-emerald-400 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
+          } else {
+            lbl.textContent = `🏠 ${owner}`;
+            lbl.className = "house-label bg-emerald-500 text-slate-950 border-slate-900 px-2 py-0.5 rounded-md text-[10px] font-black shadow-md";
+          }
         } else {
           lbl.textContent = `Plot #${h.userData.id} (FREE)`;
           lbl.className = "house-label bg-slate-900/80 text-slate-200 border-slate-600 px-2 py-0.5 rounded text-[9px] font-bold";
@@ -1347,6 +1555,14 @@
       setTimeout(() => t.classList.add("hidden"), 4500);
     }
 
+    function focusCitizenById(hid) {
+      const h = clickableHouses.find(item => item.userData.id === hid);
+      if (h) {
+        focusOnHouse(h);
+        showToast(`⚡ Zoomed to ${h.userData.owner} (Naoya Zenin Avatar + Free Yard & Oak Tree)!`);
+      }
+    }
+
     function openClaimModal(specificHouseId = null) {
       preselectedHouseId = specificHouseId;
       document.getElementById("claimModal").classList.remove("hidden");
@@ -1355,7 +1571,6 @@
     function closeClaimModal() { document.getElementById("claimModal").classList.add("hidden"); }
     function unlockClaimStep() { document.getElementById("followConfirmCheck").checked = true; }
 
-    // Gateway Toko Shopify agar Pembeli Selalu Menulis Username
     function openShopGateway(prefillUsername = "") {
       if (prefillUsername) {
         document.getElementById("shopUsernameInput").value = prefillUsername;
@@ -1368,7 +1583,7 @@
     }
 
     function proceedToShopify() {
-      let u = document.getElementById("shopUsernameInput").value.trim().toLowerCase();
+      let u = document.getElementById("shopUsernameInput").value.trim();
       if (!u) {
         showToast("⚠️ Please enter your TikTok @username first so we can upgrade your house!");
         return;
@@ -1388,15 +1603,21 @@
     }
 
     async function submitClaimHouse() {
-      let rawUser = document.getElementById("claimUsernameInput").value.trim().toLowerCase();
+      let rawUser = document.getElementById("claimUsernameInput").value.trim();
       const isChecked = document.getElementById("followConfirmCheck").checked;
+      const hasCommented = document.getElementById("commentConfirmCheck").checked;
 
       if (!rawUser) { showToast("⚠️ Please enter your TikTok @username!"); return; }
       if (!isChecked) { showToast("⚠️ Please follow @mayorofnexatoncity first!"); return; }
       if (!rawUser.startsWith("@")) rawUser = "@" + rawUser;
 
-      const existingHouse = clickableHouses.find(h => h.userData.owner === rawUser);
+      const existingHouse = clickableHouses.find(h => h.userData.owner && h.userData.owner.toLowerCase() === rawUser.toLowerCase());
       if (existingHouse) {
+        if (hasCommented) {
+          claimedData[existingHouse.userData.id].has_yard = true;
+          localStorage.setItem("nexaton_citizens_v3", JSON.stringify(claimedData));
+          refreshHousesState();
+        }
         closeClaimModal();
         focusOnHouse(existingHouse);
         showToast(`🎉 Welcome back ${rawUser}! Taking you to House #${existingHouse.userData.id}.`);
@@ -1408,7 +1629,6 @@
         : null;
       if (!targetHouse) targetHouse = clickableHouses.find(h => !h.userData.owner);
 
-      // Jika kebetulan penuh, langsung lebarkan pulau mengambang baru!
       if (!targetHouse) {
         spawnNextExpansionIsland();
         targetHouse = clickableHouses.find(h => !h.userData.owner);
@@ -1417,8 +1637,8 @@
       const hid = targetHouse.userData.id;
       const prevIslands = spawnedExpansionIslands;
 
-      claimedData[hid] = { username: rawUser, tier: "subsidized", decor: null };
-      localStorage.setItem("nexaton_citizens_v2", JSON.stringify(claimedData));
+      claimedData[hid] = { username: rawUser, tier: "subsidized", decor: null, has_yard: hasCommented, avatar: "citizen" };
+      localStorage.setItem("nexaton_citizens_v3", JSON.stringify(claimedData));
 
       if (supabaseClient) {
         try { await supabaseClient.from("citizens").upsert({ house_id: hid, username: rawUser }); } catch (e) {}
@@ -1431,13 +1651,13 @@
       if (spawnedExpansionIslands > prevIslands) {
         showToast(`🏝️ 12 Houses Full! Mayor automatically built Floating Island #${spawnedExpansionIslands + 1} & 4 new houses!`);
       } else {
-        showToast(`🎉 Congratulations ${rawUser}! You now own Subsidized House #${hid}!`);
+        showToast(`🎉 Congratulations ${rawUser}! You now own Subsidized House #${hid}${hasCommented ? " + Free Yard & Tree!" : "!"}`);
       }
     }
 
     function focusOnHouse(houseGroup) {
       controls.target.set(houseGroup.position.x, 1.5, houseGroup.position.z);
-      camera.position.set(houseGroup.position.x, 15, houseGroup.position.z + 17);
+      camera.position.set(houseGroup.position.x, 14, houseGroup.position.z + 16);
     }
 
     function searchCitizen() {
@@ -1515,10 +1735,11 @@
       roomScene.add(createBlock(0.55, 0.55, 0.55, 0xfef08a, 1.6, 1.65, -1.9));
 
       roomCitizenMesh = new THREE.Group();
-      roomCitizenMesh.add(createBlock(0.35, 0.65, 0.35, 0x1e3a8a, -0.2, 0.45, 0));
-      roomCitizenMesh.add(createBlock(0.35, 0.65, 0.35, 0x1e3a8a, 0.2, 0.45, 0));
-      roomCitizenMesh.add(createBlock(0.8, 0.85, 0.45, 0x10b981, 0, 1.2, 0));
-      roomCitizenMesh.add(createBlock(0.8, 0.8, 0.8, 0xfde68a, 0, 2.0, 0));
+      roomCitizenMesh.add(createBlock(0.35, 0.65, 0.35, 0xd6d3d1, -0.2, 0.45, 0));
+      roomCitizenMesh.add(createBlock(0.35, 0.65, 0.35, 0xd6d3d1, 0.2, 0.45, 0));
+      roomCitizenMesh.add(createBlock(0.8, 0.85, 0.45, 0x1e293b, 0, 1.2, 0));
+      roomCitizenMesh.add(createBlock(0.8, 0.8, 0.8, 0xffedd5, 0, 2.0, 0));
+      roomCitizenMesh.add(createBlock(0.84, 0.25, 0.84, 0xfacc15, 0, 2.42, 0));
       roomCitizenMesh.position.set(0.5, 0, 0.5);
       roomScene.add(roomCitizenMesh);
     }
@@ -1531,12 +1752,13 @@
       roomBedBlanket.material.color.setHex(houseData.roofColor);
 
       const actionArea = document.getElementById("roomActionArea");
-      document.getElementById("infoBuilding").textContent = houseData.tier === "villa" ? "VIP Cyber Villa 🏰" : "Subsidized 🏠";
+      document.getElementById("infoYard").textContent = houseData.has_yard ? "Unlocked (Fence + Tree) 🌳" : "Comment on TikTok 💬";
+      document.getElementById("roomYardBanner").textContent = houseData.has_yard ? "🌳 Yard & Oak Tree: INSTALLED" : "🌳 Yard: Comment to Unlock";
       document.getElementById("infoDecor").textContent = houseData.decor ? houseData.decor : "Shop Upgrade 🛍️";
 
       if (houseData.owner) {
         roomCitizenMesh.visible = true;
-        document.getElementById("roomOwnerBanner").textContent = `👤 Citizen: ${houseData.owner}`;
+        document.getElementById("roomOwnerBanner").textContent = `👤 Citizen: ${houseData.owner}${houseData.avatarType === "naoya" ? " (Naoya Zenin)" : ""}`;
         document.getElementById("infoCitizen").textContent = houseData.owner;
         actionArea.innerHTML = `
           <button onclick="closeInterior(); openShopGateway('${houseData.owner}');"
@@ -1572,15 +1794,15 @@
     }
 
     // =========================================================
-    // 9. LOOP ANIMASI LAMPU MERAH, HEWAN MUSIMAN & KOMEDI MAYOR
+    // 9. LOOP ANIMASI AKTIVITAS MUSIMAN, NAOYA ZENIN & MAYOR
     // =========================================================
     const mayorPhrases = [
-      "\"Welcome to NexatonCity! 🏙️\"",
-      "\"Steve & Alex already moved in! 🧱\"",
+      "\"Welcome @Godkingters 2.0 to House #3! 🎉\"",
+      "\"He got a Naoya Zenin avatar & Free Yard! 🌳\"",
       "\"Follow @mayorofnexatoncity...\"",
-      "\"...to claim your FREE house! 🏠\"",
-      "\"When 12 houses fill up...\"",
-      "\"...our Floating Island expands! 🏝️\""
+      "\"...and comment to get YOUR free house! 🏠\"",
+      "\"Look at the citizens enjoying the season! ✨\"",
+      "\"Shop decor to unlock a 2-Story VIP Villa! 🏰\""
     ];
 
     const bubbleEl = document.getElementById("mayorBubble");
@@ -1623,7 +1845,40 @@
 
       const activeSeason = seasons[currentSeasonIdx];
 
-      // 2. Animasi Hewan Spesifik Musim
+      // 2. Animasi Properti Aktivitas Musiman Warga (Bola Salju, Bola Pantai, Api Unggun, Cipratan Hujan)
+      if (activeSeason.id === "snow") {
+        snowballsList.forEach(sb => {
+          const u = sb.userData;
+          const t = (Math.sin(tick * 0.055 + u.phase) + 1) * 0.5;
+          sb.position.x = THREE.MathUtils.lerp(u.x1, u.x2, t);
+          sb.position.z = THREE.MathUtils.lerp(u.z1, u.z2, t);
+          sb.position.y = 1.3 + Math.sin(t * Math.PI) * 2.6; // Melambung di udara
+          sb.rotation.x += 0.1;
+          sb.rotation.y += 0.1;
+        });
+      } else if (activeSeason.id === "summer") {
+        beachBallsList.forEach(bb => {
+          const u = bb.userData;
+          const t = (Math.sin(tick * 0.04 + u.phase) + 1) * 0.5;
+          bb.position.x = THREE.MathUtils.lerp(u.x1, u.x2, t);
+          bb.position.z = THREE.MathUtils.lerp(u.z1, u.z2, t);
+          bb.position.y = 0.5 + Math.abs(Math.sin(tick * 0.12 + u.phase)) * 2.2;
+          bb.rotation.z += 0.08;
+        });
+      } else if (activeSeason.id === "autumn") {
+        campfireFlamesList.forEach(fl => {
+          const s = 0.85 + Math.abs(Math.sin(tick * 0.2 + fl.userData.phase)) * 0.4;
+          fl.scale.set(1, s, 1);
+        });
+      } else if (activeSeason.id === "rain") {
+        rainSplashRingsList.forEach(rg => {
+          const s = ((tick * 0.04 + rg.userData.phase) % 1.5) + 0.4;
+          rg.scale.set(s, 1, s);
+          rg.material.opacity = Math.max(0, 1.0 - (s / 1.9));
+        });
+      }
+
+      // 3. Animasi Hewan Spesifik Musim
       seasonalAnimals.forEach((anim) => {
         const u = anim.userData;
         if (u.season !== activeSeason.id) return;
@@ -1649,7 +1904,7 @@
         }
       });
 
-      // 3. Gerakan Burung Natural vs Kunang-Kunang Malam
+      // 4. Gerakan Burung Natural vs Kunang-Kunang Malam
       if (!isNight) {
         birdsList.forEach((b, idx) => {
           const u = b.userData;
@@ -1684,7 +1939,7 @@
         });
       }
 
-      // 4. Animasi Partikel Musim
+      // 5. Animasi Partikel Musim
       if (activeSeason.showParticles) {
         weatherDrops.forEach(drop => {
           drop.position.y -= activeSeason.fallSpeed * drop.userData.speedMod;
@@ -1723,21 +1978,33 @@
         d.position.y = 3.3 - (t * t * 2.6);
       });
 
+      // 6. Animasi Warga Sesuai Musim & Gerak Cepat Naoya Zenin (@Godkingters 2.0)
       citizenAvatars.forEach((av) => {
         const p = av.userData.phase;
-        const walkOffset = Math.sin(tick * 0.03 + p) * 1.1;
+        // Naoya Zenin bergerak lebih cepat dengan efek dash Projection Sorcery!
+        const speedMult = av.userData.isNaoya ? 0.065 : 0.03;
+        const walkOffset = Math.sin(tick * speedMult + p) * 1.15;
         av.position.x = walkOffset;
-        av.position.y = 0.15 + Math.abs(Math.sin(tick * 0.12 + p)) * 0.12;
-        av.rotation.y = Math.cos(tick * 0.03 + p) > 0 ? Math.PI / 2 : -Math.PI / 2;
 
-        const swing = Math.sin(tick * 0.15 + p) * 0.5;
+        // Melompat gembira saat hujan (melompati genangan air) atau musim semi
+        const jumpHeight = (activeSeason.id === "rain" || activeSeason.id === "sakura") ? 0.28 : 0.14;
+        av.position.y = 0.18 + Math.abs(Math.sin(tick * 0.14 + p)) * jumpHeight;
+        av.rotation.y = Math.cos(tick * speedMult + p) > 0 ? Math.PI / 2 : -Math.PI / 2;
+
+        const swing = Math.sin(tick * 0.18 + p) * 0.55;
         av.userData.legL.rotation.x = swing;
         av.userData.legR.rotation.x = -swing;
         av.userData.armL.rotation.x = -swing;
-        av.userData.armR.rotation.x = swing;
+
+        // Jika musim salju atau musim panas, tangan kanan mengayun melempar bola salju / bola pantai!
+        if (activeSeason.id === "snow" || activeSeason.id === "summer") {
+          av.userData.armR.rotation.x = Math.sin(tick * 0.28 + p) * 1.1;
+        } else {
+          av.userData.armR.rotation.x = swing;
+        }
       });
 
-      // 5. Mayor Berjalan di Trotoar Bundaran + Adegan Kepleset / Bersin
+      // 7. Mayor Berjalan di Trotoar Bundaran + Adegan Kepleset / Bersin
       if (mayorGroup) {
         const gagCycle = nowSec % 45;
 
