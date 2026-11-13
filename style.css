@@ -1,0 +1,77 @@
+/* =========================================================
+   FILE: style.css (GAYA VISUAL MINECRAFT / VOXEL UI)
+   ========================================================= */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f172a;
+  font-family: 'Inter', sans-serif;
+}
+
+.pixel-font {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.mc-panel {
+  background: rgba(15, 23, 42, 0.92);
+  border: 3px solid #475569;
+  box-shadow: inset -3px -3px 0px #0f172a, inset 3px 3px 0px #94a3b8, 0 10px 25px rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+}
+
+.mc-btn {
+  background: #38bdf8;
+  border: 3px solid #0284c7;
+  box-shadow: inset -2px -2px 0px #0369a1, inset 2px 2px 0px #bae6fd;
+  transition: transform 0.1s;
+}
+
+.mc-btn:active {
+  transform: translateY(2px);
+}
+
+.mc-btn-emerald {
+  background: #10b981;
+  border: 3px solid #059669;
+  box-shadow: inset -2px -2px 0px #065f46, inset 2px 2px 0px #6ee7b7;
+}
+
+.mc-btn-gold {
+  background: #f59e0b;
+  border: 3px solid #b45309;
+  box-shadow: inset -2px -2px 0px #78350f, inset 2px 2px 0px #fde68a;
+}
+
+#webgl-container {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#webgl-container:active {
+  cursor: grabbing;
+}
+
+#mayorBubble {
+  position: fixed;
+  z-index: 12;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.house-label {
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
